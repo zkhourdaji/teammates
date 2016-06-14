@@ -8,7 +8,7 @@ import teammates.common.util.Const;
 import teammates.common.util.FieldValidator;
 import teammates.common.util.Sanitizer;
 import teammates.common.util.Utils;
-import teammates.storage.entity.FeedbackQuestion;
+import teammates.storage.entity.Question;
 
 import com.google.appengine.api.datastore.Text;
 import com.google.gson.Gson;
@@ -39,11 +39,10 @@ public class FeedbackQuestionAttributes extends EntityAttributes implements Comp
         // attributes to be set after construction
     }
 
-    public FeedbackQuestionAttributes(FeedbackQuestion fq) {
+    public FeedbackQuestionAttributes(Question fq) {
         this.feedbackQuestionId = fq.getId();
         this.feedbackSessionName = fq.getFeedbackSessionName();
         this.courseId = fq.getCourseId();
-        this.creatorEmail = fq.getCreatorEmail();
         this.questionMetaData = fq.getQuestionMetaData();
         this.questionNumber = fq.getQuestionNumber();
         this.questionType = fq.getQuestionType();
@@ -78,8 +77,8 @@ public class FeedbackQuestionAttributes extends EntityAttributes implements Comp
     }
 
     @Override
-    public FeedbackQuestion toEntity() {
-        return new FeedbackQuestion(feedbackSessionName, courseId, creatorEmail,
+    public Question toEntity() {
+        return new Question(feedbackSessionName, courseId, creatorEmail,
                                     questionMetaData, questionNumber, questionType, giverType,
                                     recipientType, numberOfEntitiesToGiveFeedbackTo,
                                     showResponsesTo, showGiverNameTo, showRecipientNameTo);

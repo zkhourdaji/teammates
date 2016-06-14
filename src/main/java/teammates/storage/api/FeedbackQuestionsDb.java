@@ -2,7 +2,9 @@ package teammates.storage.api;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.Query;
@@ -14,7 +16,8 @@ import teammates.common.exception.EntityDoesNotExistException;
 import teammates.common.exception.InvalidParametersException;
 import teammates.common.util.Assumption;
 import teammates.common.util.Const;
-import teammates.storage.entity.FeedbackQuestion;
+import teammates.storage.entity.Question;
+import teammates.storage.entity.FeedbackSession;
 
 public class FeedbackQuestionsDb extends EntitiesDb {
     public static final String ERROR_UPDATE_NON_EXISTENT = "Trying to update non-existent Feedback Question : ";
@@ -42,7 +45,7 @@ public class FeedbackQuestionsDb extends EntitiesDb {
     public FeedbackQuestionAttributes getFeedbackQuestion(String feedbackQuestionId) {
         Assumption.assertNotNull(Const.StatusCodes.DBLEVEL_NULL_INPUT, feedbackQuestionId);
 
-        FeedbackQuestion fq = getFeedbackQuestionEntity(feedbackQuestionId);
+        Question fq = getFeedbackQuestionEntity(feedbackQuestionId);
         
         if (fq == null) {
             log.info("Trying to get non-existent Question: " + feedbackQuestionId);
@@ -56,7 +59,7 @@ public class FeedbackQuestionsDb extends EntitiesDb {
             EntityAttributes entityToAdd) throws InvalidParametersException {
         Object obj = this.createEntityWithoutExistenceCheck(entityToAdd);
         
-        return new FeedbackQuestionAttributes((FeedbackQuestion) obj);
+        return new FeedbackQuestionAttributes((Question) obj);
     }
     
     /**
@@ -72,7 +75,7 @@ public class FeedbackQuestionsDb extends EntitiesDb {
         Assumption.assertNotNull(Const.StatusCodes.DBLEVEL_NULL_INPUT, courseId);
         Assumption.assertNotNull(Const.StatusCodes.DBLEVEL_NULL_INPUT, questionNumber);
 
-        FeedbackQuestion fq = getFeedbackQuestionEntity(feedbackSessionName,
+        Question fq = getFeedbackQuestionEntity(feedbackSessionName,
                 courseId, questionNumber);
         
         if (fq == null) {
@@ -94,16 +97,35 @@ public class FeedbackQuestionsDb extends EntitiesDb {
         Assumption.assertNotNull(Const.StatusCodes.DBLEVEL_NULL_INPUT, feedbackSessionName);
         Assumption.assertNotNull(Const.StatusCodes.DBLEVEL_NULL_INPUT, courseId);
 
-        List<FeedbackQuestion> questions = getFeedbackQuestionEntitiesForSession(
-                feedbackSessionName, courseId);
+        List<Question> questions = getFeedbackQuestionEntitiesForSession(feedbackSessionName, courseId);
+        return getFeedbackQuestionAttributesFromFeedbackQuestions(questions);
+    }
+    
+    public List<FeedbackQuestionAttributes> getFeedbackQuestionsForSession(FeedbackSession feedbackSession) {
+        List<Question> questions = feedbackSession.getFeedbackQuestions();
+        return getFeedbackQuestionAttributesFromFeedbackQuestions(questions);
+    }
+
+    public static List<FeedbackQuestionAttributes> getFeedbackQuestionAttributesFromFeedbackQuestions(
+                                                        Collection<Question> questions) {
         List<FeedbackQuestionAttributes> fqList = new ArrayList<FeedbackQuestionAttributes>();
 
-        for (FeedbackQuestion question : questions) {
+        for (Question question : questions) {
             if (!JDOHelper.isDeleted(question)) {
                 fqList.add(new FeedbackQuestionAttributes(question));
             }
         }
         
+        Collections.sort(fqList);
+        return fqList;
+    }
+    
+    public static List<Question> getFeedbackQuestionEntitiesFromFeedbackQuestionAttributes(
+            Collection<FeedbackQuestionAttributes> questions) {
+        List<Question> fqList = new ArrayList<Question>();
+        for (FeedbackQuestionAttributes question : questions) {
+            fqList.add(question.toEntity());
+        }
         return fqList;
     }
     
@@ -118,17 +140,9 @@ public class FeedbackQuestionsDb extends EntitiesDb {
         Assumption.assertNotNull(Const.StatusCodes.DBLEVEL_NULL_INPUT, courseId);
         Assumption.assertNotNull(Const.StatusCodes.DBLEVEL_NULL_INPUT, giverType);
 
-        List<FeedbackQuestion> questions = getFeedbackQuestionEntitiesForGiverType(
+        List<Question> questions = getFeedbackQuestionEntitiesForGiverType(
                 feedbackSessionName, courseId, giverType);
-        List<FeedbackQuestionAttributes> fqList = new ArrayList<FeedbackQuestionAttributes>();
-
-        for (FeedbackQuestion question : questions) {
-            if (!JDOHelper.isDeleted(question)) {
-                fqList.add(new FeedbackQuestionAttributes(question));
-            }
-        }
-        
-        return fqList;
+        return getFeedbackQuestionAttributesFromFeedbackQuestions(questions);
     }
     
     /**
@@ -139,16 +153,8 @@ public class FeedbackQuestionsDb extends EntitiesDb {
     public List<FeedbackQuestionAttributes> getFeedbackQuestionsForCourse(String courseId) {
         Assumption.assertNotNull(Const.StatusCodes.DBLEVEL_NULL_INPUT, courseId);
 
-        List<FeedbackQuestion> questions = getFeedbackQuestionEntitiesForCourse(courseId);
-        List<FeedbackQuestionAttributes> fqList = new ArrayList<FeedbackQuestionAttributes>();
-
-        for (FeedbackQuestion question : questions) {
-            if (!JDOHelper.isDeleted(question)) {
-                fqList.add(new FeedbackQuestionAttributes(question));
-            }
-        }
-        
-        return fqList;
+        List<Question> questions = getFeedbackQuestionEntitiesForCourse(courseId);
+        return getFeedbackQuestionAttributesFromFeedbackQuestions(questions);
     }
     
     /**
@@ -187,7 +193,7 @@ public class FeedbackQuestionsDb extends EntitiesDb {
             throw new InvalidParametersException(newAttributes.getInvalidityInfo());
         }
         
-        FeedbackQuestion fq = (FeedbackQuestion) getEntity(newAttributes);
+        Question fq = (Question) getEntity(newAttributes);
         
         if (fq == null) {
             throw new EntityDoesNotExistException(
@@ -222,33 +228,33 @@ public class FeedbackQuestionsDb extends EntitiesDb {
     public void deleteFeedbackQuestionsForCourses(List<String> courseIds) {
         Assumption.assertNotNull(Const.StatusCodes.DBLEVEL_NULL_INPUT, courseIds);
         
-        List<FeedbackQuestion> feedbackQuestionList = getFeedbackQuestionEntitiesForCourses(courseIds);
+        List<Question> feedbackQuestionList = getFeedbackQuestionEntitiesForCourses(courseIds);
         
         getPm().deletePersistentAll(feedbackQuestionList);
         getPm().flush();
     }
     
-    private List<FeedbackQuestion> getFeedbackQuestionEntitiesForCourses(List<String> courseIds) {
-        Query q = getPm().newQuery(FeedbackQuestion.class);
+    private List<Question> getFeedbackQuestionEntitiesForCourses(List<String> courseIds) {
+        Query q = getPm().newQuery(Question.class);
         q.setFilter(":p.contains(courseId)");
         
         @SuppressWarnings("unchecked")
-        List<FeedbackQuestion> feedbackQuestionList = (List<FeedbackQuestion>) q.execute(courseIds);
+        List<Question> feedbackQuestionList = (List<Question>) q.execute(courseIds);
         
         return feedbackQuestionList;
     }
     
     // Gets a question entity if it's Key (feedbackQuestionId) is known.
-    private FeedbackQuestion getFeedbackQuestionEntity(String feedbackQuestionId) {
+    private Question getFeedbackQuestionEntity(String feedbackQuestionId) {
         Assumption.assertNotNull(Const.StatusCodes.DBLEVEL_NULL_INPUT, feedbackQuestionId);
 
-        Query q = getPm().newQuery(FeedbackQuestion.class);
+        Query q = getPm().newQuery(Question.class);
         q.declareParameters("String feedbackQuestionIdParam");
         q.setFilter("feedbackQuestionId == feedbackQuestionIdParam");
         
         @SuppressWarnings("unchecked")
-        List<FeedbackQuestion> feedbackQuestionList =
-                (List<FeedbackQuestion>) q.execute(feedbackQuestionId);
+        List<Question> feedbackQuestionList =
+                (List<Question>) q.execute(feedbackQuestionId);
         
         if (feedbackQuestionList.isEmpty() || JDOHelper.isDeleted(feedbackQuestionList.get(0))) {
             return null;
@@ -258,18 +264,18 @@ public class FeedbackQuestionsDb extends EntitiesDb {
     }
     
     // Gets a feedbackQuestion based on feedbackSessionName and questionNumber.
-    private FeedbackQuestion getFeedbackQuestionEntity(
+    private Question getFeedbackQuestionEntity(
             String feedbackSessionName, String courseId, int questionNumber) {
         
-        Query q = getPm().newQuery(FeedbackQuestion.class);
+        Query q = getPm().newQuery(Question.class);
         q.declareParameters("String feedbackSessionNameParam, String courseIdParam, int questionNumberParam");
         q.setFilter("feedbackSessionName == feedbackSessionNameParam && "
                     + "courseId == courseIdParam && "
                     + "questionNumber == questionNumberParam");
         
         @SuppressWarnings("unchecked")
-        List<FeedbackQuestion> feedbackQuestionList =
-                (List<FeedbackQuestion>) q.execute(feedbackSessionName, courseId, questionNumber);
+        List<Question> feedbackQuestionList =
+                (List<Question>) q.execute(feedbackSessionName, courseId, questionNumber);
         
         if (feedbackQuestionList.isEmpty() || JDOHelper.isDeleted(feedbackQuestionList.get(0))) {
             return null;
@@ -278,33 +284,33 @@ public class FeedbackQuestionsDb extends EntitiesDb {
         return feedbackQuestionList.get(0);
     }
     
-    private List<FeedbackQuestion> getFeedbackQuestionEntitiesForSession(
+    private List<Question> getFeedbackQuestionEntitiesForSession(
             String feedbackSessionName, String courseId) {
-        Query q = getPm().newQuery(FeedbackQuestion.class);
+        Query q = getPm().newQuery(Question.class);
         q.declareParameters("String feedbackSessionNameParam, String courseIdParam");
         q.setFilter("feedbackSessionName == feedbackSessionNameParam && courseId == courseIdParam");
         
         @SuppressWarnings("unchecked")
-        List<FeedbackQuestion> feedbackQuestionList =
-                (List<FeedbackQuestion>) q.execute(feedbackSessionName, courseId);
+        List<Question> feedbackQuestionList =
+                (List<Question>) q.execute(feedbackSessionName, courseId);
         
         return feedbackQuestionList;
     }
     
-    private List<FeedbackQuestion> getFeedbackQuestionEntitiesForCourse(String courseId) {
-        Query q = getPm().newQuery(FeedbackQuestion.class);
+    private List<Question> getFeedbackQuestionEntitiesForCourse(String courseId) {
+        Query q = getPm().newQuery(Question.class);
         q.declareParameters("String courseIdParam");
         q.setFilter("courseId == courseIdParam");
         
         @SuppressWarnings("unchecked")
-        List<FeedbackQuestion> feedbackQuestionList = (List<FeedbackQuestion>) q.execute(courseId);
+        List<Question> feedbackQuestionList = (List<Question>) q.execute(courseId);
         
         return feedbackQuestionList;
     }
     
-    private List<FeedbackQuestion> getFeedbackQuestionEntitiesForGiverType(
+    private List<Question> getFeedbackQuestionEntitiesForGiverType(
             String feedbackSessionName, String courseId, FeedbackParticipantType giverType) {
-        Query q = getPm().newQuery(FeedbackQuestion.class);
+        Query q = getPm().newQuery(Question.class);
         q.declareParameters("String feedbackSessionNameParam, "
                             + "String courseIdParam, "
                             + "FeedbackParticipantType giverTypeParam");
@@ -314,8 +320,8 @@ public class FeedbackQuestionsDb extends EntitiesDb {
                     + "giverType == giverTypeParam ");
         
         @SuppressWarnings("unchecked")
-        List<FeedbackQuestion> feedbackQuestionList =
-                (List<FeedbackQuestion>) q.execute(feedbackSessionName, courseId, giverType);
+        List<Question> feedbackQuestionList =
+                (List<Question>) q.execute(feedbackSessionName, courseId, giverType);
         
         return feedbackQuestionList;
     }
