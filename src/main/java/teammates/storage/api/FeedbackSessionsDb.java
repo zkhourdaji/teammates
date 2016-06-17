@@ -265,6 +265,10 @@ public class FeedbackSessionsDb extends EntitiesDb {
         fs.setIsOpeningEmailEnabled(newAttributes.isOpeningEmailEnabled());
         fs.setSendClosingEmail(newAttributes.isClosingEmailEnabled());
         fs.setSendPublishedEmail(newAttributes.isPublishedEmailEnabled());
+        
+        fs.setFeedbackQuestion(
+                FeedbackQuestionsDb.getFeedbackQuestionEntitiesFromFeedbackQuestionAttributes(
+                        newAttributes.getQuestions()));
                 
         log.info(newAttributes.getBackupIdentifier());
         getPm().close();

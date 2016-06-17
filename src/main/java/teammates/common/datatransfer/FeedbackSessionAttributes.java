@@ -16,11 +16,14 @@ import teammates.common.util.Sanitizer;
 import teammates.common.util.TimeHelper;
 import teammates.common.util.Utils;
 import teammates.storage.api.FeedbackQuestionsDb;
+import teammates.storage.entity.FeedbackQuestion;
 import teammates.storage.entity.FeedbackSession;
 
 import com.google.appengine.api.datastore.Text;
 
 public class FeedbackSessionAttributes extends EntityAttributes implements SessionAttributes {
+    private String feedbackSessionId;
+    
     private String feedbackSessionName;
     private String courseId;
     private String creatorEmail;
@@ -53,6 +56,8 @@ public class FeedbackSessionAttributes extends EntityAttributes implements Sessi
     }
 
     public FeedbackSessionAttributes(FeedbackSession fs) {
+        this.feedbackSessionId = fs.getId();
+        Utils.getLogger().info(feedbackSessionId);
         this.feedbackSessionName = fs.getFeedbackSessionName();
         this.courseId = fs.getCourseId();
         this.creatorEmail = fs.getCreatorEmail();
@@ -286,6 +291,10 @@ public class FeedbackSessionAttributes extends EntityAttributes implements Sessi
     @Override
     public boolean isValid() {
         return getInvalidityInfo().isEmpty();
+    }
+    
+    public String getId() {
+        return feedbackSessionId == null ? this.feedbackSessionName + "%" + this.courseId : feedbackSessionId;
     }
 
     public boolean isClosingWithinTimeLimit(int hours) {
@@ -685,5 +694,9 @@ public class FeedbackSessionAttributes extends EntityAttributes implements Sessi
     
     public void setQuestions(List<FeedbackQuestionAttributes> questions) {
         this.questions = questions;
+    }
+
+    public void addQuestion(FeedbackQuestionAttributes obj) {
+        this.questions.add(obj);
     }
 }

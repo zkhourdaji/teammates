@@ -4,18 +4,23 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.Query;
 
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
+
 import teammates.common.datatransfer.EntityAttributes;
 import teammates.common.datatransfer.FeedbackParticipantType;
 import teammates.common.datatransfer.FeedbackQuestionAttributes;
+import teammates.common.datatransfer.FeedbackSessionAttributes;
+import teammates.common.exception.EntityAlreadyExistsException;
 import teammates.common.exception.EntityDoesNotExistException;
 import teammates.common.exception.InvalidParametersException;
 import teammates.common.util.Assumption;
 import teammates.common.util.Const;
+import teammates.storage.entity.FeedbackQuestion;
 import teammates.storage.entity.Question;
 import teammates.storage.entity.FeedbackSession;
 
@@ -42,10 +47,11 @@ public class FeedbackQuestionsDb extends EntitiesDb {
      * * All parameters are non-null.
      * @return Null if not found.
      */
-    public FeedbackQuestionAttributes getFeedbackQuestion(String feedbackQuestionId) {
+    public FeedbackQuestionAttributes getFeedbackQuestion(FeedbackSessionAttributes fsa, 
+                                                          String feedbackQuestionId) {
         Assumption.assertNotNull(Const.StatusCodes.DBLEVEL_NULL_INPUT, feedbackQuestionId);
 
-        Question fq = getFeedbackQuestionEntity(feedbackQuestionId);
+        Question fq = getFeedbackQuestionEntity(fsa, feedbackQuestionId);
         
         if (fq == null) {
             log.info("Trying to get non-existent Question: " + feedbackQuestionId);
@@ -55,9 +61,14 @@ public class FeedbackQuestionsDb extends EntitiesDb {
         return new FeedbackQuestionAttributes(fq);
     }
 
-    public FeedbackQuestionAttributes createFeedbackQuestionWithoutExistenceCheck(
-            EntityAttributes entityToAdd) throws InvalidParametersException {
-        Object obj = this.createEntityWithoutExistenceCheck(entityToAdd);
+    public FeedbackQuestionAttributes createFeedbackQuestion(
+            FeedbackSessionAttributes fsa, 
+            FeedbackQuestionAttributes question) 
+                    throws InvalidParametersException, EntityDoesNotExistException {
+        
+        Object obj = this.createEntityWithoutExistenceCheckWithoutFlushing(question);
+        fsa.addQuestion(question);
+        new FeedbackSessionsDb().updateFeedbackSession(fsa); // this flushes
         
         return new FeedbackQuestionAttributes((Question) obj);
     }
@@ -245,22 +256,16 @@ public class FeedbackQuestionsDb extends EntitiesDb {
     }
     
     // Gets a question entity if it's Key (feedbackQuestionId) is known.
-    private Question getFeedbackQuestionEntity(String feedbackQuestionId) {
+    private Question getFeedbackQuestionEntity(FeedbackSessionAttributes fsa, String feedbackQuestionId) {
         Assumption.assertNotNull(Const.StatusCodes.DBLEVEL_NULL_INPUT, feedbackQuestionId);
+        
+        log.info("get fq ent");
 
-        Query q = getPm().newQuery(Question.class);
-        q.declareParameters("String feedbackQuestionIdParam");
-        q.setFilter("feedbackQuestionId == feedbackQuestionIdParam");
-        
-        @SuppressWarnings("unchecked")
-        List<Question> feedbackQuestionList =
-                (List<Question>) q.execute(feedbackQuestionId);
-        
-        if (feedbackQuestionList.isEmpty() || JDOHelper.isDeleted(feedbackQuestionList.get(0))) {
-            return null;
-        }
-        
-        return feedbackQuestionList.get(0);
+        Key k = KeyFactory.createKey(FeedbackSession.class.getSimpleName(), fsa.getId())
+                            .getChild(
+                                     Question.class.getSimpleName(), feedbackQuestionId);
+        Question q = getPm().getObjectById(Question.class, k);
+        return q;
     }
     
     // Gets a feedbackQuestion based on feedbackSessionName and questionNumber.
@@ -331,7 +336,10 @@ public class FeedbackQuestionsDb extends EntitiesDb {
         FeedbackQuestionAttributes feedbackQuestionToGet = (FeedbackQuestionAttributes) attributes;
         
         if (feedbackQuestionToGet.getId() != null) {
-            return getFeedbackQuestionEntity(feedbackQuestionToGet.getId());
+            FeedbackSessionAttributes fs = new FeedbackSessionAttributes();
+            fs.setCourseId(feedbackQuestionToGet.courseId);
+            fs.setFeedbackSessionName(feedbackQuestionToGet.feedbackSessionName);
+            return getFeedbackQuestionEntity(fs, feedbackQuestionToGet.getId());
         }
         
         return getFeedbackQuestionEntity(

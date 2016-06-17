@@ -109,7 +109,11 @@ public class FeedbackResponseCommentSearchResultBundle extends SearchResultBundl
             FeedbackQuestionAttributes question = new Gson().fromJson(
                     doc.getOnlyField(Const.SearchDocumentField.FEEDBACK_QUESTION_ATTRIBUTE).getText(),
                     FeedbackQuestionAttributes.class);
-            if (fqLogic.getFeedbackQuestion(question.getId()) == null) {
+            
+            FeedbackSessionAttributes fsa = new FeedbackSessionAttributes();
+            fsa.setCourseId(question.courseId);
+            fsa.setFeedbackSessionName(question.getFeedbackSessionName());
+            if (fqLogic.getFeedbackQuestion(fsa, question.getId()) == null) {
                 frcLogic.deleteDocument(comment);
                 continue;
             }

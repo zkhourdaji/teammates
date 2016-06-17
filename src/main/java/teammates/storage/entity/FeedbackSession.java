@@ -29,7 +29,7 @@ public class FeedbackSession {
     @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
     @PrimaryKey
     @Persistent
-    private transient String feedbackSessionId;
+    private String feedbackSessionId;
     
     @Persistent
     private String feedbackSessionName;
@@ -108,7 +108,8 @@ public class FeedbackSession {
     @Persistent
     private Boolean isPublishedEmailEnabled;
     
-    @Order(extensions = @Extension(vendorName="datanucleus",key="list-ordering", value="questionNumber asc"))
+    @Persistent
+    @Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", value="questionNumber asc"))
     private List<Question> feedbackQuestions;
     
     public FeedbackSession(String feedbackSessionName, String courseId,
@@ -152,6 +153,10 @@ public class FeedbackSession {
         this.respondingInstructorList = instructorList;
         this.respondingStudentList = studentList;
         this.feedbackQuestions = questions;
+    }
+    
+    public String getId() {
+        return feedbackSessionId;
     }
 
     public String getFeedbackSessionName() {
@@ -334,6 +339,10 @@ public class FeedbackSession {
     
     public List<Question> getFeedbackQuestions() {
         return feedbackQuestions;
+    }
+    
+    public void setFeedbackQuestion(List<Question> questions) {
+        this.feedbackQuestions = questions;
     }
 
     @Override

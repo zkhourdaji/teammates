@@ -211,6 +211,20 @@ public abstract class EntitiesDb {
         return entity;
     }
     
+    public Object createEntityWithoutExistenceCheckWithoutFlushing(EntityAttributes entityToAdd) 
+            throws InvalidParametersException {
+        Assumption.assertNotNull(Const.StatusCodes.DBLEVEL_NULL_INPUT, entityToAdd);
+        
+        entityToAdd.sanitizeForSaving();
+        
+        if (!entityToAdd.isValid()) {
+            throw new InvalidParametersException(entityToAdd.getInvalidityInfo());
+        }
+        
+        Object entity = entityToAdd.toEntity();
+        return entity;
+    }
+    
     // TODO: use this method for subclasses.
     /**
      * Note: This is a non-cascade delete.<br>

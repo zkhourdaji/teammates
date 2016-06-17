@@ -56,6 +56,7 @@ public class FeedbackQuestionAttributes extends EntityAttributes implements Comp
         this.createdAt = fq.getCreatedAt();
         this.updatedAt = fq.getUpdatedAt();
         
+     
         removeIrrelevantVisibilityOptions();
     }
 
@@ -78,10 +79,14 @@ public class FeedbackQuestionAttributes extends EntityAttributes implements Comp
 
     @Override
     public Question toEntity() {
-        return new Question(feedbackSessionName, courseId, creatorEmail,
-                                    questionMetaData, questionNumber, questionType, giverType,
-                                    recipientType, numberOfEntitiesToGiveFeedbackTo,
-                                    showResponsesTo, showGiverNameTo, showRecipientNameTo);
+        String questionId = Sanitizer.sanitizeForUri(courseId)
+                            + "-" + Sanitizer.sanitizeForUri(feedbackSessionName)
+                            + "-" + questionNumber;
+        return new Question(questionId, 
+                            feedbackSessionName, courseId, creatorEmail,
+                            questionMetaData, questionNumber, questionType, giverType,
+                            recipientType, numberOfEntitiesToGiveFeedbackTo,
+                            showResponsesTo, showGiverNameTo, showRecipientNameTo);
     }
 
     @Override
@@ -133,11 +138,6 @@ public class FeedbackQuestionAttributes extends EntityAttributes implements Comp
         error = validator.getInvalidityInfoForCourseId(courseId);
         if (!error.isEmpty()) {
             errors.add(error);
-        }
-
-        error = validator.getInvalidityInfoForEmail(creatorEmail);
-        if (!error.isEmpty()) {
-            errors.add("Invalid creator's email: " + error);
         }
 
         errors.addAll(validator.getValidityInfoForFeedbackParticipantType(giverType, recipientType));
