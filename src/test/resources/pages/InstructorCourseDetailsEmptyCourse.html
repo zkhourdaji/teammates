@@ -109,7 +109,7 @@
   </h1>
   <br>
   <div class="well well-plain" id="courseInformationHeader">
-    <button class="btn btn-default btn-xs icon-button pull-right" data-original-title="Give a comment about all students in the course" data-placement="top" data-toggle="tooltip" id="button_add_comment" title="" type="button">
+    <button class="btn btn-default btn-xs icon-button pull-right" data-original-title="Give a comment about all students in the course" data-placement="top" data-toggle="tooltip" id="button-add-comment" title="" type="button">
       <span class="glyphicon glyphicon-comment glyphicon-primary">
       </span>
     </button>
@@ -138,7 +138,7 @@
         <label class="col-sm-3 control-label">
           Sections:
         </label>
-        <div class="col-sm-6" id="total_sections">
+        <div class="col-sm-6" id="total-sections">
           <p class="form-control-static">
             0
           </p>
@@ -148,7 +148,7 @@
         <label class="col-sm-3 control-label">
           Teams:
         </label>
-        <div class="col-sm-6" id="total_teams">
+        <div class="col-sm-6" id="total-teams">
           <p class="form-control-static">
             0
           </p>
@@ -158,7 +158,7 @@
         <label class="col-sm-3 control-label">
           Total students:
         </label>
-        <div class="col-sm-6" id="total_students">
+        <div class="col-sm-6" id="total-students">
           <p class="form-control-static">
             0
           </p>
@@ -179,12 +179,12 @@
     </div>
   </div>
   <div class="well well-plain" id="commentArea" style="display: none;">
-    <form action="/page/instructorStudentCommentAdd" method="post" name="form_commentadd">
+    <form action="/page/instructorStudentCommentAdd" method="post" name="form-commentadd">
       <div class="form-group form-inline">
         <label style="margin-right: 24px;">
           Recipient:
         </label>
-        <select class="form-control" disabled="" id="comment_recipient_select">
+        <select class="form-control" disabled="" id="comment-recipient-select">
           <option selected="" value="COURSE">
             The whole class
           </option>
@@ -256,8 +256,8 @@
       <textarea class="form-control" id="commentText" name="commenttext" placeholder="Enter your comment here ..." rows="6" style="margin-bottom: 15px;">
       </textarea>
       <div style="text-align: center;">
-        <input class="btn btn-primary" id="button_save_comment" type="submit" value="Save">
-        <input class="btn btn-default" id="button_cancel_comment" type="button" value="Cancel">
+        <input class="btn btn-primary" id="button-save-comment" type="submit" value="Save">
+        <input class="btn btn-default" id="button-cancel-comment" type="button" value="Cancel">
         <input name="courseid" type="hidden" value="CCDetailsUiT.CourseWithoutStudents">
         <input name="recipienttype" type="hidden" value="COURSE">
         <input name="recipients" type="hidden" value="CCDetailsUiT.CourseWithoutStudents">
@@ -285,7 +285,7 @@
   <table class="table table-bordered table-striped">
     <thead class="fill-primary">
       <tr>
-        <th class="align-center color_white bold">
+        <th class="align-center color-white bold">
           There are no students in this course
         </th>
       </tr>

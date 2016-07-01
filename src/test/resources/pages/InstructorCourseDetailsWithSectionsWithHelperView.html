@@ -6,7 +6,7 @@
   </h1>
   <br>
   <div class="well well-plain" id="courseInformationHeader">
-    <button class="btn btn-default btn-xs icon-button pull-right" data-original-title="Give a comment about all students in the course" data-placement="top" data-toggle="tooltip" disabled="" id="button_add_comment" title="" type="button">
+    <button class="btn btn-default btn-xs icon-button pull-right" data-original-title="Give a comment about all students in the course" data-placement="top" data-toggle="tooltip" disabled="" id="button-add-comment" title="" type="button">
       <span class="glyphicon glyphicon-comment glyphicon-primary">
       </span>
     </button>
@@ -35,7 +35,7 @@
         <label class="col-sm-3 control-label">
           Sections:
         </label>
-        <div class="col-sm-6" id="total_sections">
+        <div class="col-sm-6" id="total-sections">
           <p class="form-control-static">
             2
           </p>
@@ -45,7 +45,7 @@
         <label class="col-sm-3 control-label">
           Teams:
         </label>
-        <div class="col-sm-6" id="total_teams">
+        <div class="col-sm-6" id="total-teams">
           <p class="form-control-static">
             2
           </p>
@@ -55,7 +55,7 @@
         <label class="col-sm-3 control-label">
           Total students:
         </label>
-        <div class="col-sm-6" id="total_students">
+        <div class="col-sm-6" id="total-students">
           <p class="form-control-static">
             3
           </p>
@@ -78,9 +78,9 @@
       </div>
       <div class="form-group">
         <div class="align-center">
-          <input class="btn btn-primary" data-original-title="Email an invitation to all students yet to join requesting them to join the course using their Google Accounts. Note: Students can use TEAMMATES without ‘joining’, but a joined student can access extra features e.g. set up a user profile" data-placement="top" data-toggle="tooltip" disabled="" id="button_remind" onclick="if(toggleSendRegistrationKeysConfirmation('CCDetailsUiT.CS2103')) window.location.href='/page/instructorCourseRemind?courseid=CCDetailsUiT.CS2103&user=CCDetailsUiT.instr2Helper';" tabindex="1" title="" type="button" value="Remind Students to Join">
+          <input class="btn btn-primary" data-original-title="Email an invitation to all students yet to join requesting them to join the course using their Google Accounts. Note: Students can use TEAMMATES without ‘joining’, but a joined student can access extra features e.g. set up a user profile" data-placement="top" data-toggle="tooltip" disabled="" id="button-remind" onclick="if(toggleSendRegistrationKeysConfirmation('CCDetailsUiT.CS2103')) window.location.href='/page/instructorCourseRemind?courseid=CCDetailsUiT.CS2103&user=CCDetailsUiT.instr2Helper';" tabindex="1" title="" type="button" value="Remind Students to Join">
           <form action="/page/instructorCourseStudentListDownload" method="post" style="display:inline;">
-            <input class="btn btn-primary" id="button_download" name="fruploaddownloadbtn" type="submit" value=" Download Student List ">
+            <input class="btn btn-primary" id="button-download" name="fruploaddownloadbtn" type="submit" value=" Download Student List ">
             <input name="user" type="hidden" value="CCDetailsUiT.instr2Helper">
             <input name="courseid" type="hidden" value="CCDetailsUiT.CS2103">
           </form>
@@ -136,12 +136,12 @@
     </div>
   </div>
   <div class="well well-plain" id="commentArea" style="display: none;">
-    <form action="/page/instructorStudentCommentAdd" method="post" name="form_commentadd">
+    <form action="/page/instructorStudentCommentAdd" method="post" name="form-commentadd">
       <div class="form-group form-inline">
         <label style="margin-right: 24px;">
           Recipient:
         </label>
-        <select class="form-control" disabled="" id="comment_recipient_select">
+        <select class="form-control" disabled="" id="comment-recipient-select">
           <option selected="" value="COURSE">
             The whole class
           </option>
@@ -213,8 +213,8 @@
       <textarea class="form-control" id="commentText" name="commenttext" placeholder="Enter your comment here ..." rows="6" style="margin-bottom: 15px;">
       </textarea>
       <div style="text-align: center;">
-        <input class="btn btn-primary" id="button_save_comment" type="submit" value="Save">
-        <input class="btn btn-default" id="button_cancel_comment" type="button" value="Cancel">
+        <input class="btn btn-primary" id="button-save-comment" type="submit" value="Save">
+        <input class="btn btn-default" id="button-cancel-comment" type="button" value="Cancel">
         <input name="courseid" type="hidden" value="CCDetailsUiT.CS2103">
         <input name="recipienttype" type="hidden" value="COURSE">
         <input name="recipients" type="hidden" value="CCDetailsUiT.CS2103">
@@ -238,27 +238,27 @@
         <th>
           Photo
         </th>
-        <th class="button-sort-none" id="button_sortsection-0" onclick="toggleSort(this)">
+        <th class="button-sort-none" id="button-sortsection-0" onclick="toggleSort(this)">
           Section
           <span class="icon-sort unsorted">
           </span>
         </th>
-        <th class="button-sort-none" id="button_sortteam-0" onclick="toggleSort(this)">
+        <th class="button-sort-none" id="button-sortteam-0" onclick="toggleSort(this)">
           Team
           <span class="icon-sort unsorted">
           </span>
         </th>
-        <th class="button-sort-none" id="button_sortstudentname-0" onclick="toggleSort(this)">
+        <th class="button-sort-none" id="button-sortstudentname-0" onclick="toggleSort(this)">
           Student Name
           <span class="icon-sort unsorted">
           </span>
         </th>
-        <th class="button-sort-none" id="button_sortstudentstatus" onclick="toggleSort(this)">
+        <th class="button-sort-none" id="button-sortstudentstatus" onclick="toggleSort(this)">
           Status
           <span class="icon-sort unsorted">
           </span>
         </th>
-        <th class="button-sort-none" id="button_sortemail-0" onclick="toggleSort(this)">
+        <th class="button-sort-none" id="button-sortemail-0" onclick="toggleSort(this)">
           Email
           <span class="icon-sort unsorted">
           </span>
@@ -269,7 +269,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr class="student_row" id="student-c0.0">
+      <tr class="student-row" id="student-c0.0">
         <td id="studentphoto-c0.0">
           <div class="profile-pic-icon-click align-center" data-link="/page/studentProfilePic?studentemail=${student.email.enc}&courseid=${course.id.enc}&user=CCDetailsUiT.instr2Helper">
             <a class="student-profile-pic-view-link btn-link">
@@ -337,7 +337,7 @@
           </div>
         </td>
       </tr>
-      <tr class="student_row" id="student-c0.1">
+      <tr class="student-row" id="student-c0.1">
         <td id="studentphoto-c0.1">
           <div class="profile-pic-icon-click align-center" data-link="/page/studentProfilePic?studentemail=${student.email.enc}&courseid=${course.id.enc}&user=CCDetailsUiT.instr2Helper">
             <a class="student-profile-pic-view-link btn-link">
@@ -408,7 +408,7 @@
           </div>
         </td>
       </tr>
-      <tr class="student_row" id="student-c0.2">
+      <tr class="student-row" id="student-c0.2">
         <td id="studentphoto-c0.2">
           <div class="profile-pic-icon-click align-center" data-link="/page/studentProfilePic?studentemail=${student.email.enc}&courseid=${course.id.enc}&user=CCDetailsUiT.instr2Helper">
             <a class="student-profile-pic-view-link btn-link">

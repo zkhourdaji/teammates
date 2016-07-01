@@ -7,7 +7,7 @@
   <br>
   <div class="panel panel-primary">
     <div class="panel-body fill-plain">
-      <form action="/page/instructorCourseAdd" class="form form-horizontal" method="get" name="form_addcourse">
+      <form action="/page/instructorCourseAdd" class="form form-horizontal" method="get" name="form-addcourse">
         <input id="instructorid" name="instructorid" type="hidden" value="${test.instructor}">
         <input name="user" type="hidden" value="${test.instructor}">
         <div class="form-group">
@@ -54,12 +54,12 @@
     <table class="table table-bordered table-striped" id="tableActiveCourses">
       <thead class="fill-primary">
         <tr>
-          <th class="button-sort-ascending" id="button_sortcourseid" onclick="toggleSort(this);">
+          <th class="button-sort-ascending" id="button-sortcourseid" onclick="toggleSort(this);">
             Course ID
             <span class="icon-sort sorted-ascending">
             </span>
           </th>
-          <th class="button-sort-none" id="button_sortcoursename" onclick="toggleSort(this);">
+          <th class="button-sort-none" id="button-sortcoursename" onclick="toggleSort(this);">
             Course Name
             <span class="icon-sort unsorted">
             </span>
