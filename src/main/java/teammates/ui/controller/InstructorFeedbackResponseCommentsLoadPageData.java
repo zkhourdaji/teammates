@@ -229,9 +229,9 @@ public class InstructorFeedbackResponseCommentsLoadPageData extends PageData {
 
     private String getExtraClass(String giverEmail, String instructorEmail, boolean isPublic) {
         
-        return " giver_display-by-"
+        return " giver-display-by-"
              + (giverEmail.equals(instructorEmail) ? "you" : "others")
-             + " status_display-"
+             + " status-display-"
              + (isPublic ? "public" : "private");
     }
 

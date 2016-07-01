@@ -7,7 +7,7 @@ function updateRankPointsValue(questionNum) {
 }
 
 function addRankOption(questionNum) {
-    var questionId = '#form_editquestion-' + questionNum;
+    var questionId = '#form-editquestion-' + questionNum;
     var idSuffix = getQuestionIdSuffix(questionNum);
     
     var curNumberOfChoiceCreated = parseInt($('#' + FEEDBACK_QUESTION_NUMBEROFCHOICECREATED + idSuffix).val());
@@ -40,7 +40,7 @@ function hideRankOptionTable(questionNum) {
 }
 
 function removeRankOption(index, questionNum) {
-    var questionId = '#form_editquestion-' + questionNum;
+    var questionId = '#form-editquestion-' + questionNum;
     var idSuffix = getQuestionIdSuffix(questionNum);
     var $thisRow = $('#rankOptionRow-' + index + idSuffix);
     

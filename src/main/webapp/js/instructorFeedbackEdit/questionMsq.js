@@ -1,5 +1,5 @@
 function addMsqOption(questionNum) {
-    var questionId = '#form_editquestion-' + questionNum;
+    var questionId = '#form-editquestion-' + questionNum;
     var idSuffix = getQuestionIdSuffix(questionNum);
 
     var curNumberOfChoiceCreated =
@@ -31,7 +31,7 @@ function addMsqOption(questionNum) {
 }
 
 function removeMsqOption(index, questionNum) {
-    var questionId = '#form_editquestion-' + questionNum;
+    var questionId = '#form-editquestion-' + questionNum;
     var idSuffix = getQuestionIdSuffix(questionNum);
     
     var $thisRow = $('#msqOptionRow-' + index + idSuffix);

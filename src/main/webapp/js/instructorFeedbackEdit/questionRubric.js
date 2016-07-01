@@ -1,5 +1,5 @@
 function addRubricRow(questionNum) {
-    var questionId = '#form_editquestion-' + questionNum;
+    var questionId = '#form-editquestion-' + questionNum;
     var idSuffix = getQuestionIdSuffix(questionNum);
     
     var numberOfRows = parseInt($('#rubricNumRows' + idSuffix).val());
@@ -73,7 +73,7 @@ function addRubricRow(questionNum) {
 }
 
 function addRubricCol(questionNum) {
-    var questionId = '#form_editquestion-' + questionNum;
+    var questionId = '#form-editquestion-' + questionNum;
     var idSuffix = getQuestionIdSuffix(questionNum);
     
     var numberOfRows = parseInt($('#rubricNumRows' + idSuffix).val());
@@ -169,7 +169,7 @@ function addRubricCol(questionNum) {
 }
 
 function removeRubricRow(index, questionNum) {
-    var questionId = '#form_editquestion-' + questionNum;
+    var questionId = '#form-editquestion-' + questionNum;
     var idSuffix = getQuestionIdSuffix(questionNum);
     
     var $thisRow = $('#rubricRow' + idSuffix + '-' + index);
@@ -194,7 +194,7 @@ function removeRubricRow(index, questionNum) {
 }
 
 function removeRubricCol(index, questionNum) {
-    var questionId = '#form_editquestion-' + questionNum;
+    var questionId = '#form-editquestion-' + questionNum;
     var idSuffix = getQuestionIdSuffix(questionNum);
     
     var $thisCol = $('.rubricCol' + idSuffix + '-' + index);

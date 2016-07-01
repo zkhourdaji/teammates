@@ -7,7 +7,7 @@ function updateConstSumPointsValue(questionNum) {
 }
 
 function addConstSumOption(questionNum) {
-    var questionId = '#form_editquestion-' + questionNum;
+    var questionId = '#form-editquestion-' + questionNum;
     var idSuffix = getQuestionIdSuffix(questionNum);
     
     var curNumberOfChoiceCreated = parseInt($('#' + FEEDBACK_QUESTION_NUMBEROFCHOICECREATED + idSuffix).val());
@@ -41,7 +41,7 @@ function hideConstSumOptionTable(questionNum) {
 }
 
 function removeConstSumOption(index, questionNum) {
-    var questionId = '#form_editquestion-' + questionNum;
+    var questionId = '#form-editquestion-' + questionNum;
     var idSuffix = getQuestionIdSuffix(questionNum);
     var $thisRow = $('#constSumOptionRow-' + index + idSuffix);
     

@@ -90,7 +90,7 @@ public class InstructorCommentsPageDataTest extends BaseTestCase {
         String recipientDisplay = "student2 In Course1 (Team 1.1</td></div>'\", student2InCourse1@gmail.tmt)";
         CommentAttributes comment = dataBundle.comments.get("comment1FromI3C1toS2C1");
         CommentRow commentRow = new CommentRow(comment, giverDetails, recipientDisplay);
-        commentRow.withExtraClass("status_display-private");
+        commentRow.withExtraClass("status-display-private");
         commentRow.setVisibilityIcon("");
         commentRow.setNotificationIcon(comment.isPendingNotification());
         commentRow.setEditDeleteEnabled(true);
@@ -102,7 +102,7 @@ public class InstructorCommentsPageDataTest extends BaseTestCase {
         recipientDisplay = "all students in this course";
         comment = dataBundle.comments.get("comment1FromI3C1toC1");
         commentRow = new CommentRow(comment, giverDetails, recipientDisplay);
-        commentRow.withExtraClass("status_display-private");
+        commentRow.withExtraClass("status-display-private");
         commentRow.setVisibilityIcon("");
         commentRow.setNotificationIcon(comment.isPendingNotification());
         commentRow.setEditDeleteEnabled(true);
@@ -113,7 +113,7 @@ public class InstructorCommentsPageDataTest extends BaseTestCase {
         // Create expected comments table
         List<CommentsForStudentsTable> expectedCommentsForStudentsTables = new ArrayList<CommentsForStudentsTable>();
         CommentsForStudentsTable commentsForStudentsTable = new CommentsForStudentsTable(giverDetails, commentRows);
-        commentsForStudentsTable.withExtraClass("giver_display-by-you");
+        commentsForStudentsTable.withExtraClass("giver-display-by-you");
         expectedCommentsForStudentsTables.add(commentsForStudentsTable);
         List<CommentsForStudentsTable> actualCommentsForStudentsTables = data.getCommentsForStudentsTables();
         

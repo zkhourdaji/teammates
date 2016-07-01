@@ -41,7 +41,7 @@ $(document).ready(function() {
     });
     
     // check submit text before submit
-    $('form.form_comment').submit(function() {
+    $('form.form-comment').submit(function() {
         return checkComment(this);
     });
     
@@ -55,85 +55,85 @@ $(document).ready(function() {
     });
     
     // Binding for "Display All" panel option
-    $('#panel_all').click(function() {
-        // use panel_all checkbox to control its children checkboxes.
-        if ($('#panel_all').is(':checked')) {
-            $('input[id^=panel_check]').prop('checked', true);
+    $('#panel-all').click(function() {
+        // use panel-all checkbox to control its children checkboxes.
+        if ($('#panel-all').is(':checked')) {
+            $('input[id^=panel-check]').prop('checked', true);
         } else {
-            $('input[id^=panel_check]').prop('checked', false);
+            $('input[id^=panel-check]').prop('checked', false);
         }
         
         filterPanel();
     });
     
     // Binding for changes in the panel check boxes
-    $('input[id^=panel_check]').change(function() {
-        // based on the selected panel_check check boxes, check/uncheck panel_all check box
-        if ($("input[id^='panel_check']:checked").length === $("input[id^='panel_check']").length) {
-            $('#panel_all').prop('checked', true);
+    $('input[id^=panel-check]').change(function() {
+        // based on the selected panel-check check boxes, check/uncheck panel-all check box
+        if ($("input[id^='panel-check']:checked").length === $("input[id^='panel-check']").length) {
+            $('#panel-all').prop('checked', true);
         } else {
-            $('#panel_all').prop('checked', false);
+            $('#panel-all').prop('checked', false);
         }
         
         filterPanel();
     });
     
     function filterPanel() {
-        // if no panel_check checkboxes are checked, show the no-comment box to user
-        if ($("input[id^='panel_check']:checked").length === 0) {
+        // if no panel-check checkboxes are checked, show the no-comment box to user
+        if ($("input[id^='panel-check']:checked").length === 0) {
             $('#no-comment-panel').show();
             // if all is checked, show giver and status for better user experience
-            if ($('#panel_all').prop('checked')) {
-                $('#giver_all').closest('.filter-options').show();
-                $('#status_all').closest('.filter-options').show();
+            if ($('#panel-all').prop('checked')) {
+                $('#giver-all').closest('.filter-options').show();
+                $('#status-all').closest('.filter-options').show();
             } else {
-                $('#giver_all').closest('.filter-options').hide();
-                $('#status_all').closest('.filter-options').hide();
+                $('#giver-all').closest('.filter-options').hide();
+                $('#status-all').closest('.filter-options').hide();
             }
         } else {
             $('#no-comment-panel').hide();
-            $('#giver_all').closest('.filter-options').show();
-            $('#status_all').closest('.filter-options').show();
+            $('#giver-all').closest('.filter-options').show();
+            $('#status-all').closest('.filter-options').show();
         }
         
-        // hide the panel accordingly based on panel_check checkbox
-        $("input[id^='panel_check']").each(function() {
-            var panelIdx = $(this).attr('id').split('-')[1];
+        // hide the panel accordingly based on panel-check checkbox
+        $("input[id^='panel-check']").each(function() {
+            var panelIdx = $(this).attr('id').split('-')[2];
             if (this.checked) {
-                $('#panel_display-' + panelIdx).show();
+                $('#panel-display-' + panelIdx).show();
             } else {
-                $('#panel_display-' + panelIdx).hide();
+                $('#panel-display-' + panelIdx).hide();
             }
         });
     }
     
     // Binding for "Display All" giver option
-    $('#giver_all').click(function() {
-        // use giver_all checkbox to control its children checkboxes.
-        if ($('#giver_all').is(':checked')) {
-            $('input[id^=giver_check]').prop('checked', true);
-            $('#status_all').prop('disabled', false);
-            $('input[id^=status_check]').prop('disabled', false);
+    $('#giver-all').click(function() {
+        // use giver-all checkbox to control its children checkboxes.
+        if ($('#giver-all').is(':checked')) {
+            $('input[id^=giver-check]').prop('checked', true);
+            $('#status-all').prop('disabled', false);
+            $('input[id^=status-check]').prop('disabled', false);
         } else {
-            $('input[id^=giver_check]').prop('checked', false);
-            $('#status_all').prop('disabled', true);
-            $('input[id^=status_check]').prop('disabled', true);
+            $('input[id^=giver-check]').prop('checked', false);
+            $('#status-all').prop('disabled', true);
+            $('input[id^=status-check]').prop('disabled', true);
         }
         
         filterGiver();
     });
     
     // Binding for changes in the giver checkboxes.
-    $('input[id^=giver_check]').change(function() {
-        // based on the selected checkboxes, check/uncheck giver_all checkbox
-        if ($("input[id^='giver_check']:checked").length === $("input[id^='giver_check']").length) {
-            $('#giver_all').prop('checked', true);
-            $('#status_all').prop('disabled', false);
-            $('input[id^=status_check]').prop('disabled', false);
+    $('input[id^=giver-check]').change(function() {
+        // based on the selected checkboxes, check/uncheck giver-all checkbox
+        if ($("input[id^='giver-check']:checked").length === $("input[id^='giver-check']").length) {
+            $('#giver-all').prop('checked', true);
+            $('#status-all').prop('disabled', false);
+            $('input[id^=status-check]').prop('disabled', false);
         } else {
-            $('#giver_all').prop('checked', false);
-            $('#status_all').prop('disabled', true);
-            $('input[id^=status_check]').prop('disabled', true);
+            $('#giver-all').prop('checked', false);
+            $('#status-all').prop('disabled', true);
+            $('input[id^=status-check]').prop('disabled', true);
         }
         
         filterGiver();
@@ -145,42 +145,42 @@ $(document).ready(function() {
     }
     
     function filterGiverCheckbox(checkboxBy) {
-        $('input[id=giver_check-by-' + checkboxBy + ']').each(function() {
+        $('input[id=giver-check-by-' + checkboxBy + ']').each(function() {
             if (this.checked) {
-                showCommentOfPanelIndex('.giver_display-by-' + checkboxBy);
+                showCommentOfPanelIndex('.giver-display-by-' + checkboxBy);
             } else {
-                hideCommentOfPanelIndex('.giver_display-by-' + checkboxBy);
+                hideCommentOfPanelIndex('.giver-display-by-' + checkboxBy);
             }
         });
     }
     //
     // Binding for "Display All" status option
-    $('#status_all').click(function() {
-        // use status_all checkbox to control its children checkboxes.
-        if ($('#status_all').is(':checked')) {
-            $('input[id^=status_check]').prop('checked', true);
-            $('#giver_all').prop('disabled', false);
-            $('input[id^=giver_check]').prop('disabled', false);
+    $('#status-all').click(function() {
+        // use status-all checkbox to control its children checkboxes.
+        if ($('#status-all').is(':checked')) {
+            $('input[id^=status-check]').prop('checked', true);
+            $('#giver-all').prop('disabled', false);
+            $('input[id^=giver-check]').prop('disabled', false);
         } else {
-            $('input[id^=status_check]').prop('checked', false);
-            $('#giver_all').prop('disabled', true);
-            $('input[id^=giver_check]').prop('disabled', true);
+            $('input[id^=status-check]').prop('checked', false);
+            $('#giver-all').prop('disabled', true);
+            $('input[id^=giver-check]').prop('disabled', true);
         }
         
         filterStatus();
     });
     
     // Binding for changes in the status checkboxes.
-    $('input[id^=status_check]').change(function() {
-        // based on the selected checkboxes, check/uncheck status_all checkbox
-        if ($("input[id^='status_check']:checked").length === $("input[id^='status_check']").length) {
-            $('#status_all').prop('checked', true);
-            $('#giver_all').prop('disabled', false);
-            $('input[id^=giver_check]').prop('disabled', false);
+    $('input[id^=status-check]').change(function() {
+        // based on the selected checkboxes, check/uncheck status-all checkbox
+        if ($("input[id^='status-check']:checked").length === $("input[id^='status-check']").length) {
+            $('#status-all').prop('checked', true);
+            $('#giver-all').prop('disabled', false);
+            $('input[id^=giver-check]').prop('disabled', false);
         } else {
-            $('#status_all').prop('checked', false);
-            $('#giver_all').prop('disabled', true);
-            $('input[id^=giver_check]').prop('disabled', true);
+            $('#status-all').prop('checked', false);
+            $('#giver-all').prop('disabled', true);
+            $('input[id^=giver-check]').prop('disabled', true);
         }
         
         filterStatus();
@@ -192,11 +192,11 @@ $(document).ready(function() {
     }
     
     function filterStatusCheckbox(checkboxBy) {
-        $('input[id=status_check-' + checkboxBy + ']').each(function() {
+        $('input[id=status-check-' + checkboxBy + ']').each(function() {
             if (this.checked) {
-                showCommentOfPanelIndex('.status_display-' + checkboxBy);
+                showCommentOfPanelIndex('.status-display-' + checkboxBy);
             } else {
-                hideCommentOfPanelIndex('.status_display-' + checkboxBy);
+                hideCommentOfPanelIndex('.status-display-' + checkboxBy);
             }
         });
     }
@@ -248,8 +248,8 @@ $(document).ready(function() {
             var studentCommentPanelBody = commentToHide.parent();
             // if all student comments are hidden, then hide the student comments panel
             var allStudentCommentsAreHidden =
-                    studentCommentPanel.find('div[class*="giver_display-by"][style*="display: none"]').length
-                    === studentCommentPanel.find('div[class*="giver_display-by"]').length;
+                    studentCommentPanel.find('div[class*="giver-display-by"][style*="display: none"]').length
+                    === studentCommentPanel.find('div[class*="giver-display-by"]').length;
             if (allStudentCommentsAreHidden) {
                 studentCommentPanelBody.hide();
             }
@@ -283,8 +283,8 @@ $(document).ready(function() {
     }
     
     // Binding for "Display Archived Courses" check box.
-    $('#displayArchivedCourses_check').change(function() {
-        var urlToGo = $('#displayArchivedCourses_link > a').attr('href');
+    $('#displayArchivedCourses-check').change(function() {
+        var urlToGo = $('#displayArchivedCourses-link > a').attr('href');
         if (this.checked) {
             gotoUrlWithParam(urlToGo, 'displayarchive', 'true');
         } else {
@@ -380,7 +380,7 @@ function hideAddCommentBox(id) {
 }
 
 function submitCommentForm(commentIdx) {
-    $('#form_commentedit-' + commentIdx).submit();
+    $('#form-commentedit-' + commentIdx).submit();
     return false;
 }
 

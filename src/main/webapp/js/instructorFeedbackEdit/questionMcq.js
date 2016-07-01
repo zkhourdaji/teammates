@@ -1,5 +1,5 @@
 function addMcqOption(questionNum) {
-    var questionId = '#form_editquestion-' + questionNum;
+    var questionId = '#form-editquestion-' + questionNum;
     var idSuffix = getQuestionIdSuffix(questionNum);
     
     var curNumberOfChoiceCreated =
@@ -31,7 +31,7 @@ function addMcqOption(questionNum) {
 }
 
 function removeMcqOption(index, questionNum) {
-    var questionId = '#form_editquestion-' + questionNum;
+    var questionId = '#form-editquestion-' + questionNum;
     var idSuffix = getQuestionIdSuffix(questionNum);
     
     var $thisRow = $('#mcqOptionRow-' + index + idSuffix);
@@ -70,7 +70,7 @@ function toggleMcqGeneratedOptions(checkbox, questionNum) {
 }
 
 function toggleMcqOtherOptionEnabled(checkbox, questionNum) {
-    questionId = '#form_editquestion-' + questionNum;
+    questionId = '#form-editquestion-' + questionNum;
     idSuffix = getQuestionIdSuffix(questionNum);
 
     if ($(questionId).attr('editStatus') === 'hasResponses') {

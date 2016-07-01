@@ -52,7 +52,7 @@ $(document).ready(function() {
                 // bind the show picture onhover events
                 bindStudentPhotoHoverLink($(panelBody[0]).find('.profile-pic-icon-hover'));
 
-                $(panelHeading).removeClass('ajax_submit');
+                $(panelHeading).removeClass('ajax-submit');
                 $(panelHeading).off('click');
                 displayIcon.html('<span class="glyphicon glyphicon-chevron-down"></span>');
                 var childrenPanels = $(panelBody[0]).find('div.panel');
@@ -79,5 +79,5 @@ $(document).ready(function() {
             }
         });
     };
-    $('.ajax_submit').click(seeMoreRequest);
+    $('.ajax-submit').click(seeMoreRequest);
 });

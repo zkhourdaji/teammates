@@ -27,11 +27,11 @@ function readyFeedbackEditPage() {
     
     // Bind submit text links
     $('a[id|=questionsavechangestext]').click(function() {
-        $(this).parents('form.form_question').submit();
+        $(this).parents('form.form-question').submit();
     });
     
     // Bind submit actions
-    $('form[id|=form_editquestion]').submit(function(event) {
+    $('form[id|=form-editquestion]').submit(function(event) {
         if ($(this).attr('editStatus') === 'mustDeleteResponses') {
             event.preventDefault();
             var okCallback = function() {
@@ -43,12 +43,12 @@ function readyFeedbackEditPage() {
         }
     });
 
-    $('form.form_question').submit(function() {
+    $('form.form-question').submit(function() {
         return checkFeedbackQuestion(this);
     });
 
     // Bind destructive changes
-    $('form[id|=form_editquestion]').find(':input').not('.nonDestructive').change(function() {
+    $('form[id|=form-editquestion]').find(':input').not('.nonDestructive').change(function() {
         var editStatus = $(this).parents('form').attr('editStatus');
         if (editStatus === 'hasResponses') {
             $(this).parents('form').attr('editStatus', 'mustDeleteResponses');
@@ -82,7 +82,7 @@ function readyFeedbackEditPage() {
 }
 
 function bindFeedbackSessionEditFormSubmission() {
-    $('#form_feedbacksession').submit(function(event) {
+    $('#form-feedbacksession').submit(function(event) {
         // Prevent form submission
         event.preventDefault();
         
@@ -119,11 +119,11 @@ function disableEditFS() {
     getCustomDateTimeFields().each(function() {
         $(this).data('last', $(this).prop('disabled'));
     });
-    $('#form_feedbacksession').find('text,input,button,textarea,select')
+    $('#form-feedbacksession').find('text,input,button,textarea,select')
                                   .prop('disabled', true);
     $('#fsEditLink').show();
     $('#fsSaveLink').hide();
-    $('#button_submit').hide();
+    $('#button-submit').hide();
 }
 
 /**
@@ -150,14 +150,14 @@ function enableEditFS() {
     // as students without accounts need to receive the session opening email to respond
     var $sessionOpeningReminder = $('#sendreminderemail_open');
     
-    $('#form_feedbacksession').find('text,input,button,textarea,select')
+    $('#form-feedbacksession').find('text,input,button,textarea,select')
                               .not($customDateTimeFields)
                               .not($sessionOpeningReminder)
                               .not('.disabled')
                               .prop('disabled', false);
     $('#fsEditLink').hide();
     $('#fsSaveLink').show();
-    $('#button_submit').show();
+    $('#button-submit').show();
 }
 
 function getCustomDateTimeFields() {
@@ -252,7 +252,7 @@ function enableQuestion(questionNum) {
     $('#' + FEEDBACK_QUESTION_SAVECHANGESTEXT + '-' + questionNum).show();
     $('#' + FEEDBACK_QUESTION_CANCELEDIT + '-' + questionNum).show();
     $('#' + FEEDBACK_QUESTION_EDITTYPE + '-' + questionNum).val('edit');
-    $('#button_question_submit-' + questionNum).show();
+    $('#button-question-submit-' + questionNum).show();
 }
 
 function enableNewQuestion() {
@@ -291,7 +291,7 @@ function enableNewQuestion() {
     $('#' + FEEDBACK_QUESTION_EDITTEXT + '-' + NEW_QUESTION).hide();
     $('#' + FEEDBACK_QUESTION_SAVECHANGESTEXT + '-' + NEW_QUESTION).show();
     $('#' + FEEDBACK_QUESTION_EDITTYPE + '-' + NEW_QUESTION).val('edit');
-    $('#button_question_submit-' + NEW_QUESTION).show();
+    $('#button-question-submit-' + NEW_QUESTION).show();
 }
 
 /**
@@ -331,7 +331,7 @@ function disableQuestion(questionNum) {
 
     $('#' + FEEDBACK_QUESTION_EDITTEXT + '-' + questionNum).show();
     $('#' + FEEDBACK_QUESTION_SAVECHANGESTEXT + '-' + questionNum).hide();
-    $('#button_question_submit-' + questionNum).hide();
+    $('#button-question-submit-' + questionNum).hide();
 }
 
 /**
@@ -345,7 +345,7 @@ function deleteQuestion(questionNum) {
         return false;
     } else if (confirm('Are you sure you want to delete this question?')) {
         $('#' + FEEDBACK_QUESTION_EDITTYPE + '-' + questionNum).val('delete');
-        $('#form_editquestion-' + questionNum).submit();
+        $('#form-editquestion-' + questionNum).submit();
         return true;
     }
     return false;
@@ -377,7 +377,7 @@ function discardChanges(questionNum) {
         $('#' + FEEDBACK_QUESTION_SAVECHANGESTEXT + '-' + questionNum).hide();
         $('#' + FEEDBACK_QUESTION_CANCELEDIT + '-' + questionNum).hide();
         $('#' + FEEDBACK_QUESTION_EDITTYPE + '-' + questionNum).val('');
-        $('#button_question_submit-' + questionNum).hide();
+        $('#button-question-submit-' + questionNum).hide();
     }
 
     // re-attach onChange event to show/hide numEntitiesBox according to recipient type
@@ -468,7 +468,7 @@ function showNewQuestionFrame(type) {
     enableNewQuestion();
     
     $('#addNewQuestionTable').hide();
-    $('#empty_message').hide();
+    $('#empty-message').hide();
     scrollToElement($('#questionTableNew')[0], { duration: 1000 });
     $('#questionTableNew').find('.visibilityOptions').hide();
     getVisibilityMessage($('#questionTableNew').find('.visibilityMessageButton'));
@@ -710,7 +710,7 @@ function getQuestionLink(questionNum) {
     var courseid = $('input[name="courseid"]').val();
     var fsname = encodeURIComponent($('input[name="fsname"]').val());
     
-    var questionId = $('#form_editquestion-' + questionNum).find('input[name="questionid"]').val();
+    var questionId = $('#form-editquestion-' + questionNum).find('input[name="questionid"]').val();
     
     var giverType = $('#givertype-' + questionNum).val();
     
@@ -743,7 +743,7 @@ function setupQuestionCopyModal() {
             url: actionlink + '&courseid=' + encodeURIComponent(courseid)
                             + '&fsname=' + encodeURIComponent(fsname),
             beforeSend: function() {
-                $('#button_copy_submit').prop('disabled', true);
+                $('#button-copy-submit').prop('disabled', true);
                 $('#copyTableModal').remove();
                 $questionCopyStatusMessage.removeClass('alert alert-danger');
                 $questionCopyStatusMessage.html(
@@ -771,7 +771,7 @@ function setupQuestionCopyModal() {
 
 function bindCopyButton() {
 
-    $('#button_copy_submit').click(function(e) {
+    $('#button-copy-submit').click(function(e) {
         e.preventDefault();
 
         var index = 0;
@@ -817,7 +817,7 @@ function bindCopyEvents() {
             numRowsSelected++;
         }
 
-        var $button = $('#button_copy_submit');
+        var $button = $('#button-copy-submit');
         
         $button.prop('disabled', numRowsSelected <= 0);
 

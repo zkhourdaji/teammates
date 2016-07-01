@@ -37,7 +37,7 @@
             </div>
         </c:when>
         <c:otherwise>
-            <div class="panel-heading ajax_submit">
+            <div class="panel-heading ajax-submit">
                 <div class="row">
                     <div class="col-sm-9 panel-heading-text">
                         <strong>${sectionPanel.sectionNameForDisplay}</strong>

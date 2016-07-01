@@ -1166,10 +1166,10 @@ public class InstructorFeedbackResultsPageData extends PageData {
                                                                         columnTags, isSortable);
         if (viewType == ViewType.QUESTION) {
             // setup classes, for loading responses by ajax
-            // ajax_submit: user needs to click on the panel to load
+            // ajax-submit: user needs to click on the panel to load
             // ajax_auto: responses are loaded automatically
             questionTable.setAjaxClass(isLargeNumberOfResponses()
-                                     ? " ajax_submit"
+                                     ? " ajax-submit"
                                      : " ajax_auto");
         }
         questionTable.setShowResponseRows(isShowingResponseRows);
@@ -1181,10 +1181,10 @@ public class InstructorFeedbackResultsPageData extends PageData {
     private void buildTableColumnHeaderForQuestionView(List<ElementTag> columnTags,
                                                        Map<String, Boolean> isSortable) {
         ElementTag giverTeamElement =
-                new ElementTag("Team", "id", "button_sortFromTeam", "class", "button-sort-none", "onclick",
+                new ElementTag("Team", "id", "button-sortFromTeam", "class", "button-sort-none", "onclick",
                                "toggleSort(this)", "style", "width: 15%; min-width: 67px;");
         ElementTag giverElement =
-                new ElementTag("Giver", "id", "button_sortFromName", "class", "button-sort-none", "onclick",
+                new ElementTag("Giver", "id", "button-sortFromName", "class", "button-sort-none", "onclick",
                                "toggleSort(this)", "style", "width: 15%; min-width: 65px;");
         ElementTag recipientTeamElement =
                 new ElementTag("Team", "id", "button_sortToTeam", "class", "button-sort-ascending", "onclick",
@@ -1215,10 +1215,10 @@ public class InstructorFeedbackResultsPageData extends PageData {
                                                                      Map<String, Boolean> isSortable) {
         ElementTag photoElement = new ElementTag("Photo");
         ElementTag recipientTeamElement =
-                new ElementTag("Team", "id", "button_sortFromTeam", "class", "button-sort-ascending", "onclick",
+                new ElementTag("Team", "id", "button-sortFromTeam", "class", "button-sort-ascending", "onclick",
                                "toggleSort(this)", "style", "width: 15%; min-width: 67px;");
         ElementTag recipientElement =
-                new ElementTag("Recipient", "id", "button_sortTo", "class", "button-sort-none", "onclick",
+                new ElementTag("Recipient", "id", "button-sortTo", "class", "button-sort-none", "onclick",
                                "toggleSort(this)", "style", "width: 15%; min-width: 90px;");
         ElementTag responseElement =
                 new ElementTag("Feedback", "id", "button_sortFeedback", "class", "button-sort-none", "onclick",
@@ -1239,10 +1239,10 @@ public class InstructorFeedbackResultsPageData extends PageData {
                                                                      Map<String, Boolean> isSortable) {
         ElementTag photoElement = new ElementTag("Photo");
         ElementTag giverTeamElement =
-                new ElementTag("Team", "id", "button_sortFromTeam", "class", "button-sort-ascending", "onclick",
+                new ElementTag("Team", "id", "button-sortFromTeam", "class", "button-sort-ascending", "onclick",
                                "toggleSort(this)", "style", "width: 15%; min-width: 67px;");
         ElementTag giverElement =
-                new ElementTag("Giver", "id", "button_sortFromName", "class", "button-sort-none", "onclick",
+                new ElementTag("Giver", "id", "button-sortFromName", "class", "button-sort-none", "onclick",
                                "toggleSort(this)", "style", "width: 15%; min-width: 65px;");
         ElementTag responseElement =
                 new ElementTag("Feedback", "id", "button_sortFeedback", "class", "button-sort-none", "onclick",

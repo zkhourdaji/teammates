@@ -107,9 +107,9 @@ public class InstructorCommentsPageData extends PageData {
                                                          commentModifyPermissions, roster));
             String extraClass;
             if (giverEmail.equals(COMMENT_GIVER_NAME_THAT_COMES_FIRST)) {
-                extraClass = "giver_display-by-you";
+                extraClass = "giver-display-by-you";
             } else {
-                extraClass = "giver_display-by-others";
+                extraClass = "giver-display-by-others";
             }
             table.withExtraClass(extraClass);
             commentsForStudentsTables.add(table);
@@ -132,9 +132,9 @@ public class InstructorCommentsPageData extends PageData {
             CommentRow commentDiv = new CommentRow(comment, unsanitizedGiverName, unsanitizedRecipientDetails);
             String extraClass;
             if (comment.showCommentTo.isEmpty()) {
-                extraClass = "status_display-private";
+                extraClass = "status-display-private";
             } else {
-                extraClass = "status_display-public";
+                extraClass = "status-display-public";
             }
             commentDiv.withExtraClass(extraClass);
             commentDiv.setVisibilityIcon(typeOfPeopleCanViewComment);
