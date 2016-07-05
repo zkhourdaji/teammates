@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.jdo.JDOHelper;
+import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.Query;
 
 import com.google.appengine.api.datastore.Key;
@@ -67,7 +68,6 @@ public class FeedbackQuestionsDb extends EntitiesDb {
                     throws InvalidParametersException, EntityDoesNotExistException {
         
         Object obj = this.createEntityWithoutExistenceCheckWithoutFlushing(question);
-        //fsa.addQuestion(question);
         new FeedbackSessionsDb().addQuestionToSession(fsa, question);
     }
     
@@ -259,8 +259,12 @@ public class FeedbackQuestionsDb extends EntitiesDb {
         Key k = KeyFactory.createKey(FeedbackSession.class.getSimpleName(), fsa.getId())
                             .getChild(
                                      Question.class.getSimpleName(), feedbackQuestionId);
-        Question q = getPm().getObjectById(Question.class, k);
-        return q;
+        try {
+            Question q = getPm().getObjectById(Question.class, k);
+            return q;
+        } catch (JDOObjectNotFoundException e) {
+            return null;
+        }
     }
     
     // Gets a feedbackQuestion based on feedbackSessionName and questionNumber.
