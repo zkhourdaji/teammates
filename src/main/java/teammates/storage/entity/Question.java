@@ -43,6 +43,10 @@ public class Question implements StoreCallback {
     @Persistent
     private String courseId;
     
+    // TODO: Consider removing creatorEmail since it's not necessary
+    @Persistent
+    private String creatorEmail;
+    
     private Text questionMetaData;
     
     @Persistent
@@ -108,6 +112,7 @@ public class Question implements StoreCallback {
         this.feedbackQuestionId = questionId; // Allow GAE to generate key.
         this.feedbackSessionName = feedbackSessionName;
         this.courseId = courseId;
+        this.creatorEmail = creatorEmail;
         this.questionMetaData = questionText;
         this.questionNumber = questionNumber;
         this.questionType = questionType;
@@ -126,6 +131,7 @@ public class Question implements StoreCallback {
         this.feedbackQuestionId = oldQuestion.getId(); 
         this.feedbackSessionName = oldQuestion.getFeedbackSessionName();
         this.courseId = oldQuestion.getCourseId();
+        this.creatorEmail = oldQuestion.getCreatorEmail();
         this.questionMetaData = oldQuestion.getQuestionMetaData();
         this.questionNumber = oldQuestion.getQuestionNumber();
         this.questionType = oldQuestion.getQuestionType();
