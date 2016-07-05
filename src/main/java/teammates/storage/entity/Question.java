@@ -158,6 +158,10 @@ public class Question implements StoreCallback {
         setLastUpdate(newDate);
     }
     
+    public String getCreatorEmail() {
+        return creatorEmail;
+    }
+    
     public void setLastUpdate(Date newDate) {
         if (!keepUpdateTimestamp) {
             this.updatedAt = newDate;

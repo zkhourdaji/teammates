@@ -43,6 +43,7 @@ public class FeedbackQuestionAttributes extends EntityAttributes implements Comp
         this.feedbackQuestionId = fq.getId();
         this.feedbackSessionName = fq.getFeedbackSessionName();
         this.courseId = fq.getCourseId();
+        this.creatorEmail = fq.getCreatorEmail();
         this.questionMetaData = fq.getQuestionMetaData();
         this.questionNumber = fq.getQuestionNumber();
         this.questionType = fq.getQuestionType();
@@ -55,7 +56,6 @@ public class FeedbackQuestionAttributes extends EntityAttributes implements Comp
         
         this.createdAt = fq.getCreatedAt();
         this.updatedAt = fq.getUpdatedAt();
-        
      
         removeIrrelevantVisibilityOptions();
     }
