@@ -749,17 +749,22 @@ function bindCopyButton() {
     $('#button_copy_submit').click(function(e) {
         e.preventDefault();
 
-        var index = 0;
         var hasRowSelected = false;
 
-        $('#copyTableModal >tbody>tr').each(function() {
-            var input = $(this).children('input:first');
+        var index = 0;
+        $('#copyTableModal > tbody > tr').each(function() {
+            var questionIdInput = $(this).children('input:first');
             
-            if (!input.length) {
+            if (!questionIdInput.length) {
                 return true;
             }
             if ($(this).hasClass('row-selected')) {
-                $(input).attr('name', 'questionid-' + index++);
+                $(questionIdInput).attr('name', 'questionid-' + index);
+             
+                $(this).find('input.courseid').attr('name', 'courseid-' + index);
+                $(this).find('input.fsname').attr('name', 'fsname-' + index);
+                
+                index = index + 1;
                 hasRowSelected = true;
             }
         });
@@ -770,8 +775,6 @@ function bindCopyButton() {
             setStatusMessage('No questions are selected to be copied', StatusType.DANGER);
             $('#copyModal').modal('hide');
         }
-
-        return false;
     });
 }
 
@@ -784,7 +787,7 @@ function bindCopyEvents() {
         
         if ($(this).hasClass('row-selected')) {
             $(this).removeClass('row-selected');
-            $(this).children('td:first').html('<input type="checkbox">');
+            $(this).children('td:first').html('<input name="" type="checkbox">');
             numRowsSelected--;
         } else {
             $(this).addClass('row-selected');

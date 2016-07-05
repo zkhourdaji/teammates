@@ -84,19 +84,20 @@ public class FeedbackQuestionsLogic {
     }
     
     public FeedbackQuestionAttributes copyFeedbackQuestion(
-            FeedbackSessionAttributes fs, 
+            String oldCourseId,
+            String oldFeedbackSession,
             String feedbackQuestionId,
             FeedbackSessionAttributes newSession,
             String instructorEmail)
             throws InvalidParametersException, EntityDoesNotExistException {
 
-        FeedbackQuestionAttributes question = getFeedbackQuestion(fs, feedbackQuestionId);
+        FeedbackQuestionAttributes question = getFeedbackQuestion(
+                oldFeedbackSession, oldCourseId, feedbackQuestionId);
         
         question.feedbackSessionName = newSession.getFeedbackSessionName();
         question.courseId = newSession.getCourseId();
         question.creatorEmail = instructorEmail;
         question.questionNumber = -1;
-        question.setId(null);
 
         createFeedbackQuestion(newSession, question);
         

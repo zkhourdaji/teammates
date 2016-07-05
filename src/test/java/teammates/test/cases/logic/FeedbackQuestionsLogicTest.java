@@ -303,7 +303,8 @@ public class FeedbackQuestionsLogicTest extends BaseComponentTestCase {
         FeedbackSessionAttributes fsa = typicalBundle.feedbackSessions.get("session1InCourse1");
         
         FeedbackQuestionAttributes copiedQuestion =
-                fqLogic.copyFeedbackQuestion(fsa, question1.getId(), fsa,
+                fqLogic.copyFeedbackQuestion(fsa.getCourseId(), fsa.getFeedbackSessionName(),
+                                             question1.getId(), fsa,
                                              instructor2OfCourse1.email);
         
         FeedbackQuestionDetails question1Details = question1.getQuestionDetails();

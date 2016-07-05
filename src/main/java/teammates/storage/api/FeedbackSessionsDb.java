@@ -289,9 +289,7 @@ public class FeedbackSessionsDb extends EntitiesDb {
         }
         
         fs.getFeedbackQuestions().add(question.toEntity());
-        System.out.println(fs.getFeedbackQuestions().size());
-        System.out.println("&^^&&^&^&");
-        System.out.println(fs.getFeedbackQuestions().size());
+        
         getPm().currentTransaction().commit();
     }
 

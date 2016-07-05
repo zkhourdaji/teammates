@@ -3,12 +3,21 @@ package teammates.client.scripts;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import javax.jdo.JDOHelper;
 
 import teammates.client.remoteapi.RemoteApiClient;
+import teammates.common.datatransfer.FeedbackQuestionAttributes;
+import teammates.common.datatransfer.FeedbackSessionAttributes;
+import teammates.common.exception.EntityDoesNotExistException;
+import teammates.logic.api.Logic;
+import teammates.logic.core.FeedbackSessionsLogic;
+import teammates.storage.api.FeedbackQuestionsDb;
+import teammates.storage.api.FeedbackSessionsDb;
 import teammates.storage.datastore.Datastore;
 import teammates.storage.entity.FeedbackQuestion;
 import teammates.storage.entity.Question;
@@ -41,10 +50,44 @@ public class DataMigrationForFeedbackQuestions extends RemoteApiClient {
             feedbackQuestions = getOldQuestionsSince(startCal.getTime());
         }
         
-        for (FeedbackQuestion old : feedbackQuestions) {
-            Datastore.getPersistenceManager().makePersistent(new Question(old));
+        List<FeedbackQuestionAttributes> feedbackQuestionAttributes =
+                getFeedbackQuestionAttributesFromFeedbackQuestions(feedbackQuestions);
+        for (FeedbackQuestionAttributes old : feedbackQuestionAttributes) {
+            FeedbackSessionAttributes session = new Logic().getFeedbackSession(old.getFeedbackSessionName(), old.getCourseId());
+            if (session == null) {
+                System.out.println("question: " + old.getIdentificationString());
+                System.out.println(String.format("error finding session %s", old.getFeedbackSessionName() + ":" + old.getCourseId()));
+                System.out.println("possibly due to orphaned responses");
+                continue;
+            }
+            System.out.println("worked");
+            
+            try {
+                new FeedbackSessionsDb().addQuestionToSession(session, old);
+            } catch (EntityDoesNotExistException e) {
+                e.printStackTrace();
+                throw new RuntimeException(
+                        String.format("Unable to update existing session %s with question %s",
+                                      session.getIdentificationString(),
+                                      old.getIdentificationString()),
+                        e);
+            }
         }
         Datastore.getPersistenceManager().close();
+    }
+    
+    public static List<FeedbackQuestionAttributes> getFeedbackQuestionAttributesFromFeedbackQuestions(
+            Collection<FeedbackQuestion> questions) {
+        List<FeedbackQuestionAttributes> fqList = new ArrayList<FeedbackQuestionAttributes>();
+        
+        for (FeedbackQuestion question : questions) {
+            if (!JDOHelper.isDeleted(question)) {
+                fqList.add(new FeedbackQuestionAttributes(new Question(question)));
+            }
+        }
+        
+        Collections.sort(fqList);
+        return fqList;
     }
 
     private List<FeedbackQuestion> getAllOldQuestions() {

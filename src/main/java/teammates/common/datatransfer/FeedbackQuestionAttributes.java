@@ -82,9 +82,7 @@ public class FeedbackQuestionAttributes extends EntityAttributes implements Comp
         String questionId = Sanitizer.sanitizeForUri(courseId)
                             + "/" + Sanitizer.sanitizeForUri(feedbackSessionName)
                             + "/" + questionNumber;
-        System.out.println("question id is ");
-        System.out.println(questionId);
-        return new Question(questionId, 
+        return new Question(questionId,
                             feedbackSessionName, courseId, creatorEmail,
                             questionMetaData, questionNumber, questionType, giverType,
                             recipientType, numberOfEntitiesToGiveFeedbackTo,

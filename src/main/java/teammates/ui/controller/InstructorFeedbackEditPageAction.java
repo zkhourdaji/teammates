@@ -14,6 +14,7 @@ import teammates.common.exception.EntityDoesNotExistException;
 import teammates.common.util.Assumption;
 import teammates.common.util.Const;
 import teammates.logic.api.GateKeeper;
+import teammates.storage.api.FeedbackQuestionsDb;
 
 public class InstructorFeedbackEditPageAction extends Action {
 
@@ -57,7 +58,7 @@ public class InstructorFeedbackEditPageAction extends Action {
         
         InstructorFeedbackEditPageData data = new InstructorFeedbackEditPageData(account);
         data.init(feedbackSession, questions, questionHasResponses, studentList, instructorList, instructor);
-           
+
         return createShowPageResult(Const.ViewURIs.INSTRUCTOR_FEEDBACK_EDIT, data);
     }
     

@@ -1716,17 +1716,20 @@ public class Logic {
      * @throws EntityDoesNotExistException 
      */
     public FeedbackQuestionAttributes copyFeedbackQuestion(
-            FeedbackSessionAttributes oldfsa, 
+            String oldCourseId,
+            String oldFeedbackSession,
             String feedbackQuestionId,
                 FeedbackSessionAttributes fsa, 
                 String instructorEmail)
             throws InvalidParametersException, EntityDoesNotExistException {
         
+        Assumption.assertNotNull(ERROR_NULL_PARAMETER, oldCourseId);
+        Assumption.assertNotNull(ERROR_NULL_PARAMETER, oldFeedbackSession);
         Assumption.assertNotNull(ERROR_NULL_PARAMETER, feedbackQuestionId);
         Assumption.assertNotNull(ERROR_NULL_PARAMETER, fsa);
         Assumption.assertNotNull(ERROR_NULL_PARAMETER, instructorEmail);
 
-        return feedbackQuestionsLogic.copyFeedbackQuestion(oldfsa, feedbackQuestionId, fsa, instructorEmail);
+        return feedbackQuestionsLogic.copyFeedbackQuestion(oldCourseId, oldFeedbackSession, feedbackQuestionId, fsa, instructorEmail);
     }
     
     /**

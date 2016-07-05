@@ -126,6 +126,10 @@ public class FeedbackSessionAttributes extends EntityAttributes implements Sessi
         this.respondingStudentList = studentList;
     }
     
+    public static String makeId(String feedbackSessionName, String courseId) {
+        return feedbackSessionName + "%" + courseId;
+    }
+    
     public String getCourseId() {
         return courseId;
     }
@@ -295,7 +299,7 @@ public class FeedbackSessionAttributes extends EntityAttributes implements Sessi
     }
     
     public String getId() {
-        return feedbackSessionId == null ? this.feedbackSessionName + "%" + this.courseId : feedbackSessionId;
+        return feedbackSessionId == null ? makeId(this.feedbackSessionName, this.courseId) : feedbackSessionId;
     }
 
     public boolean isClosingWithinTimeLimit(int hours) {

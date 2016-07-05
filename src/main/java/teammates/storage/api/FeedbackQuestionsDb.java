@@ -255,8 +255,6 @@ public class FeedbackQuestionsDb extends EntitiesDb {
     // Gets a question entity if it's Key (feedbackQuestionId) is known.
     private Question getFeedbackQuestionEntity(FeedbackSessionAttributes fsa, String feedbackQuestionId) {
         Assumption.assertNotNull(Const.StatusCodes.DBLEVEL_NULL_INPUT, feedbackQuestionId);
-        
-        log.info("get fq ent");
 
         Key k = KeyFactory.createKey(FeedbackSession.class.getSimpleName(), fsa.getId())
                             .getChild(

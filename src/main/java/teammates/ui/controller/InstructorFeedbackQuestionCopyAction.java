@@ -33,12 +33,8 @@ public class InstructorFeedbackQuestionCopyAction extends Action {
             statusToAdmin = "";
 
             while (feedbackQuestionId != null) {
-                FeedbackSessionAttributes oldfsa = new FeedbackSessionAttributes();
-                fsa.setCourseId(oldCourseId);
-                fsa.setFeedbackSessionName(oldFeedbackSessionName);
-                
                 FeedbackQuestionAttributes feedbackQuestion =
-                        logic.copyFeedbackQuestion(oldfsa, feedbackQuestionId, fsa, instructorEmail);
+                        logic.copyFeedbackQuestion(oldCourseId, oldFeedbackSessionName, feedbackQuestionId, fsa, instructorEmail);
 
                 index++;
 
