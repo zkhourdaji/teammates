@@ -8,6 +8,7 @@ import java.util.List;
 import javax.jdo.JDOHelper;
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.Query;
+import javax.jdo.Transaction;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
@@ -47,27 +48,34 @@ public class FeedbackQuestionsDb extends EntitiesDb {
                 Collection<FeedbackQuestionAttributes> questionsToAdd)
             throws InvalidParametersException, EntityDoesNotExistException {
         
-        getPm().currentTransaction().begin();
-        FeedbackSession fs = new FeedbackSessionsDb().getEntity(session);
-        
-        if (fs == null) {
-            throw new EntityDoesNotExistException(
-                    ERROR_UPDATE_NON_EXISTENT + session.toString());
-        }
-        
-        for (FeedbackQuestionAttributes questionToAdd : questionsToAdd) {
-            questionToAdd.sanitizeForSaving();
+        Transaction txn = getPm().currentTransaction();
+        try {
+            txn.begin();
+            FeedbackSession fs = new FeedbackSessionsDb().getEntity(session);
             
-            if (!questionToAdd.isValid()) {
-                throw new InvalidParametersException(questionToAdd.getInvalidityInfo());
+            if (fs == null) {
+                throw new EntityDoesNotExistException(
+                        ERROR_UPDATE_NON_EXISTENT + session.toString());
             }
             
-            fs.getFeedbackQuestions().add(questionToAdd.toEntity());
+            for (FeedbackQuestionAttributes questionToAdd : questionsToAdd) {
+                questionToAdd.sanitizeForSaving();
+                
+                if (!questionToAdd.isValid()) {
+                    throw new InvalidParametersException(questionToAdd.getInvalidityInfo());
+                }
+                
+                fs.getFeedbackQuestions().add(questionToAdd.toEntity());
+                
+                log.info(questionToAdd.getBackupIdentifier());
+            }
             
-            log.info(questionToAdd.getBackupIdentifier());
+            getPm().currentTransaction().commit();
+        } finally {
+            if (txn.isActive()) {
+                txn.rollback();
+            }
         }
-        
-        getPm().currentTransaction().commit();
     }
     
     /**

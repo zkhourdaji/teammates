@@ -15,6 +15,8 @@ import javax.jdo.Query;
 
 
 
+import javax.jdo.Transaction;
+
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 
@@ -280,17 +282,26 @@ public class FeedbackSessionsDb extends EntitiesDb {
     
     public void addQuestionToSession(FeedbackSessionAttributes existingSession, FeedbackQuestionAttributes question) 
             throws EntityDoesNotExistException {
-        getPm().currentTransaction().begin();
-        FeedbackSession fs = (FeedbackSession) getEntity(existingSession);
         
-        if (fs == null) {
-            throw new EntityDoesNotExistException(
-                    ERROR_UPDATE_NON_EXISTENT + existingSession.toString());
+        Transaction txn = getPm().currentTransaction();
+        try {
+            txn.begin();
+        
+            FeedbackSession fs = (FeedbackSession) getEntity(existingSession);
+            
+            if (fs == null) {
+                throw new EntityDoesNotExistException(
+                        ERROR_UPDATE_NON_EXISTENT + existingSession.toString());
+            }
+            
+            fs.getFeedbackQuestions().add(question.toEntity());
+            
+            getPm().currentTransaction().commit();
+        } finally {
+            if (txn.isActive()) {
+                txn.rollback();
+            }
         }
-        
-        fs.getFeedbackQuestions().add(question.toEntity());
-        
-        getPm().currentTransaction().commit();
     }
 
     public void addInstructorRespondant(String email, FeedbackSessionAttributes feedbackSession)
