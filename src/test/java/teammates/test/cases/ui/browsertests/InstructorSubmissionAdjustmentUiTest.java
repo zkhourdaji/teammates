@@ -117,7 +117,7 @@ public class InstructorSubmissionAdjustmentUiTest extends BaseUiTestCase {
         
         for (FeedbackResponseAttributes response : studentReceiverResponses) {
             FeedbackQuestionAttributes question = BackDoor
-                    .getFeedbackQuestion(response.feedbackQuestionId);
+                    .getFeedbackQuestion(response.feedbackSessionName, response.courseId, response.feedbackQuestionId);
             if (question.recipientType == FeedbackParticipantType.OWN_TEAM_MEMBERS) {
                 returnList.add(response);
             }
@@ -128,7 +128,7 @@ public class InstructorSubmissionAdjustmentUiTest extends BaseUiTestCase {
         
         for (FeedbackResponseAttributes response : studentGiverResponses) {
             FeedbackQuestionAttributes question = BackDoor
-                    .getFeedbackQuestion(response.feedbackQuestionId);
+                    .getFeedbackQuestion(response.feedbackSessionName, response.courseId, response.feedbackQuestionId);
             if (question.giverType == FeedbackParticipantType.TEAMS
                     || question.recipientType == FeedbackParticipantType.OWN_TEAM_MEMBERS) {
                 returnList.add(response);

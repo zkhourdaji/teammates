@@ -13,6 +13,7 @@ import teammates.common.datatransfer.FeedbackSessionAttributes;
 import teammates.common.datatransfer.FeedbackSessionType;
 import teammates.common.datatransfer.InstructorAttributes;
 import teammates.common.exception.EntityAlreadyExistsException;
+import teammates.common.exception.EntityDoesNotExistException;
 import teammates.common.exception.InvalidParametersException;
 import teammates.common.exception.TeammatesException;
 import teammates.common.util.Assumption;
@@ -64,9 +65,10 @@ public class InstructorFeedbackAddAction extends InstructorFeedbacksPageAction {
             logic.createFeedbackSession(fs);
             
             try {
-                createTemplateFeedbackQuestions(fs.getCourseId(), fs.getFeedbackSessionName(),
+                createTemplateFeedbackQuestions(fs,
+                                                fs.getCourseId(), fs.getFeedbackSessionName(),
                                                 fs.getCreatorEmail(), feedbackSessionType);
-            } catch (InvalidParametersException e) {
+            } catch (InvalidParametersException | EntityDoesNotExistException e) {
                 //Failed to create feedback questions for specified template/feedback session type.
                 //TODO: let the user know an error has occurred? delete the feedback session?
                 log.severe(TeammatesException.toStringWithStackTrace(e));
@@ -114,8 +116,10 @@ public class InstructorFeedbackAddAction extends InstructorFeedbacksPageAction {
         return createShowPageResult(Const.ViewURIs.INSTRUCTOR_FEEDBACKS, data);
     }
     
-    private void createTemplateFeedbackQuestions(String courseId, String feedbackSessionName,
-            String creatorEmail, String feedbackSessionType) throws InvalidParametersException {
+    private void createTemplateFeedbackQuestions(
+            FeedbackSessionAttributes feedbackSession,
+            String courseId, String feedbackSessionName,
+            String creatorEmail, String feedbackSessionType) throws InvalidParametersException, EntityDoesNotExistException {
         if (feedbackSessionType == null) {
             return;
         }
@@ -125,9 +129,10 @@ public class InstructorFeedbackAddAction extends InstructorFeedbacksPageAction {
         
         int questionNumber = 1;
         for (FeedbackQuestionAttributes fqa : questions) {
-            logic.createFeedbackQuestionForTemplate(fqa, questionNumber);
+            logic.createFeedbackQuestionForTemplate(feedbackSession, fqa, questionNumber);
             questionNumber++;
         }
+        
     }
     
     /** 

@@ -1498,9 +1498,10 @@ public class Logic {
      * * All parameters are non-null. <br>
      * 
      */
-    public FeedbackQuestionAttributes getFeedbackQuestion(String feedbackQuestionId) {
+    public FeedbackQuestionAttributes getFeedbackQuestion(FeedbackSessionAttributes session,
+            String feedbackQuestionId) {
         Assumption.assertNotNull(ERROR_NULL_PARAMETER, feedbackQuestionId);
-        return feedbackQuestionsLogic.getFeedbackQuestion(feedbackQuestionId);
+        return feedbackQuestionsLogic.getFeedbackQuestion(session, feedbackQuestionId);
     }
 
     /**
@@ -1679,10 +1680,14 @@ public class Logic {
     /**
      * Preconditions: <br>
      * * All parameters are non-null.
+     * @throws EntityDoesNotExistException 
      */
-    public void createFeedbackQuestion(FeedbackQuestionAttributes feedbackQuestion) throws InvalidParametersException {
+    public void createFeedbackQuestion(
+            FeedbackSessionAttributes session, FeedbackQuestionAttributes feedbackQuestion)
+                    throws InvalidParametersException, EntityDoesNotExistException {
+        Assumption.assertNotNull(ERROR_NULL_PARAMETER, session);
         Assumption.assertNotNull(ERROR_NULL_PARAMETER, feedbackQuestion);
-        feedbackQuestionsLogic.createFeedbackQuestion(feedbackQuestion);
+        feedbackQuestionsLogic.createFeedbackQuestion(session, feedbackQuestion);
     }
     
     /**
@@ -1692,31 +1697,36 @@ public class Logic {
      * Preconditions: <br>
      * * All parameters are non-null.
      * * questionNumber is > 0
+     * @throws EntityDoesNotExistException 
      */
-    public FeedbackQuestionAttributes createFeedbackQuestionForTemplate(
+    public void createFeedbackQuestionForTemplate(
+            FeedbackSessionAttributes feedbackSession,
             FeedbackQuestionAttributes feedbackQuestion, int questionNumber)
-            throws InvalidParametersException {
+            throws InvalidParametersException, EntityDoesNotExistException {
 
         Assumption.assertNotNull(ERROR_NULL_PARAMETER, feedbackQuestion);
         Assumption.assertTrue(questionNumber > 0);
-        return feedbackQuestionsLogic.createFeedbackQuestionNoIntegrityCheck(feedbackQuestion, questionNumber);
+        feedbackQuestionsLogic.createFeedbackQuestionNoIntegrityCheck(
+                                feedbackSession, feedbackQuestion, questionNumber);
     }
     
     /**
      * Preconditions: <br>
      * * All parameters are non-null.
+     * @throws EntityDoesNotExistException 
      */
-    public FeedbackQuestionAttributes copyFeedbackQuestion(String feedbackQuestionId, String feedbackSessionName,
-                                                           String courseId, String instructorEmail)
-            throws InvalidParametersException {
+    public FeedbackQuestionAttributes copyFeedbackQuestion(
+            FeedbackSessionAttributes oldfsa, 
+            String feedbackQuestionId,
+                FeedbackSessionAttributes fsa, 
+                String instructorEmail)
+            throws InvalidParametersException, EntityDoesNotExistException {
         
         Assumption.assertNotNull(ERROR_NULL_PARAMETER, feedbackQuestionId);
-        Assumption.assertNotNull(ERROR_NULL_PARAMETER, feedbackSessionName);
-        Assumption.assertNotNull(ERROR_NULL_PARAMETER, courseId);
+        Assumption.assertNotNull(ERROR_NULL_PARAMETER, fsa);
         Assumption.assertNotNull(ERROR_NULL_PARAMETER, instructorEmail);
 
-        return feedbackQuestionsLogic.copyFeedbackQuestion(feedbackQuestionId, feedbackSessionName,
-                                                           courseId, instructorEmail);
+        return feedbackQuestionsLogic.copyFeedbackQuestion(oldfsa, feedbackQuestionId, fsa, instructorEmail);
     }
     
     /**
@@ -1724,11 +1734,26 @@ public class Logic {
      * Preconditions: <br>
      * * All parameters are non-null.
      */
-    public void updateFeedbackQuestionNumber(FeedbackQuestionAttributes updatedQuestion)
+    public void updateFeedbackQuestionNumber(FeedbackSessionAttributes fsa, FeedbackQuestionAttributes updatedQuestion)
             throws InvalidParametersException, EntityDoesNotExistException {
 
         Assumption.assertNotNull(ERROR_NULL_PARAMETER, updatedQuestion);
-        feedbackQuestionsLogic.updateFeedbackQuestionNumber(updatedQuestion);
+        feedbackQuestionsLogic.updateFeedbackQuestionNumber(fsa, updatedQuestion);
+    }
+    
+    /**
+     * Updates the details of a Feedback Question.<br>
+     * The FeedbackQuestionAttributes should have the updated attributes
+     * together with the original ID of the question. Preserves null
+     * attributes.
+     * Preconditions: <br>
+     * * All parameters are non-null.
+     */
+    public void updateFeedbackQuestion(FeedbackSessionAttributes fsa, FeedbackQuestionAttributes updatedQuestion)
+            throws InvalidParametersException, EntityDoesNotExistException {
+        
+        Assumption.assertNotNull(ERROR_NULL_PARAMETER, updatedQuestion);
+        feedbackQuestionsLogic.updateFeedbackQuestion(fsa, updatedQuestion);
     }
     
     /**
@@ -1743,7 +1768,11 @@ public class Logic {
             throws InvalidParametersException, EntityDoesNotExistException {
         
         Assumption.assertNotNull(ERROR_NULL_PARAMETER, updatedQuestion);
-        feedbackQuestionsLogic.updateFeedbackQuestion(updatedQuestion);
+        
+        FeedbackSessionAttributes fsa =
+                feedbackSessionsLogic.getFeedbackSession(updatedQuestion.feedbackSessionName,
+                                                         updatedQuestion.courseId);
+        feedbackQuestionsLogic.updateFeedbackQuestion(fsa, updatedQuestion);
     }
 
     /**
@@ -1752,9 +1781,9 @@ public class Logic {
      * Preconditions: <br>
      * * All parameters are non-null.
      */
-    public void deleteFeedbackQuestion(String questionId) {
+    public void deleteFeedbackQuestion(FeedbackSessionAttributes fsa, String questionId) {
         Assumption.assertNotNull(ERROR_NULL_PARAMETER, questionId);
-        feedbackQuestionsLogic.deleteFeedbackQuestionCascade(questionId);
+        feedbackQuestionsLogic.deleteFeedbackQuestionCascade(fsa, questionId);
     }
 
     /**

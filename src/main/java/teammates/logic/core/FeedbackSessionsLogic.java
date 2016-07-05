@@ -151,7 +151,8 @@ public class FeedbackSessionsLogic {
             question.courseId = newCourseId;
             question.feedbackSessionName = newFeedbackSessionName;
             question.creatorEmail = instructorEmail;
-            fqLogic.createFeedbackQuestionNoIntegrityCheck(question, question.questionNumber);
+            fqLogic.createFeedbackQuestionNoIntegrityCheck(copiedFeedbackSession, 
+                                                           question, question.questionNumber);
         }
         
         return copiedFeedbackSession;
@@ -336,7 +337,7 @@ public class FeedbackSessionsLogic {
                 new HashMap<FeedbackQuestionAttributes, List<FeedbackResponseAttributes>>();
         Map<String, Map<String, String>> recipientList = new HashMap<String, Map<String, String>>();
 
-        FeedbackQuestionAttributes question = fqLogic.getFeedbackQuestion(feedbackQuestionId);
+        FeedbackQuestionAttributes question = fqLogic.getFeedbackQuestion(fsa, feedbackQuestionId);
         
         InstructorAttributes instructorGiver = instructor;
         StudentAttributes studentGiver = null;
@@ -458,7 +459,7 @@ public class FeedbackSessionsLogic {
                 new HashMap<FeedbackQuestionAttributes, List<FeedbackResponseAttributes>>();
         Map<String, Map<String, String>> recipientList = new HashMap<String, Map<String, String>>();
 
-        FeedbackQuestionAttributes question = fqLogic.getFeedbackQuestion(feedbackQuestionId);
+        FeedbackQuestionAttributes question = fqLogic.getFeedbackQuestion(fsa, feedbackQuestionId);
 
         Set<String> hiddenInstructorEmails = null;
 
@@ -1678,17 +1679,17 @@ public class FeedbackSessionsLogic {
      * and responses
      */
     public void deleteFeedbackSessionCascade(String feedbackSessionName, String courseId) {
+        FeedbackSessionAttributes sessionToDelete = new FeedbackSessionAttributes();
+        sessionToDelete.setFeedbackSessionName(feedbackSessionName);
+        sessionToDelete.setCourseId(courseId);
 
         try {
-            fqLogic.deleteFeedbackQuestionsForSession(feedbackSessionName, courseId);
+            fqLogic.deleteFeedbackQuestionsForSession(sessionToDelete);
         } catch (EntityDoesNotExistException e) {
             // Silently fail if session does not exist
             log.warning(TeammatesException.toStringWithStackTrace(e));
         }
 
-        FeedbackSessionAttributes sessionToDelete = new FeedbackSessionAttributes();
-        sessionToDelete.setFeedbackSessionName(feedbackSessionName);
-        sessionToDelete.setCourseId(courseId);
 
         fsDb.deleteEntity(sessionToDelete);
 
@@ -1969,7 +1970,7 @@ public class FeedbackSessionsLogic {
                                ? getFeedbackSessionResponseStatus(session, roster, allQuestions)
                                : null;
             } else {
-                FeedbackQuestionAttributes question = fqLogic.getFeedbackQuestion(questionId);
+                FeedbackQuestionAttributes question = fqLogic.getFeedbackQuestion(session, questionId);
                 if (question != null) {
                     relevantQuestions.put(question.getId(), question);
                     

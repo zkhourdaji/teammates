@@ -16,7 +16,6 @@ import teammates.common.util.Sanitizer;
 import teammates.common.util.TimeHelper;
 import teammates.common.util.Utils;
 import teammates.storage.api.FeedbackQuestionsDb;
-import teammates.storage.entity.FeedbackQuestion;
 import teammates.storage.entity.FeedbackSession;
 
 import com.google.appengine.api.datastore.Text;
@@ -149,6 +148,8 @@ public class FeedbackSessionAttributes extends EntityAttributes implements Sessi
 
     @Override
     public FeedbackSession toEntity() {
+        System.out.println("FSA toentity");
+        System.out.println(getIdentificationString());
         return new FeedbackSession(
                feedbackSessionName, courseId, creatorEmail, instructions, createdTime,
                startTime, endTime, sessionVisibleFromTime, resultsVisibleFromTime,
@@ -697,6 +698,8 @@ public class FeedbackSessionAttributes extends EntityAttributes implements Sessi
     }
 
     public void addQuestion(FeedbackQuestionAttributes obj) {
-        this.questions.add(obj);
+        System.out.println("FSA add questions");
+        System.out.println(questions.size());
+        questions.add(obj);
     }
 }

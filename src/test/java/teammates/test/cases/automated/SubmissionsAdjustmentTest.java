@@ -284,8 +284,10 @@ public class SubmissionsAdjustmentTest extends BaseComponentUsingTaskQueueTestCa
                 .getFeedbackResponsesForReceiverForCourse(student.course, student.email);
         
         for (FeedbackResponseAttributes response : studentReceiverResponses) {
+            FeedbackSessionAttributes fsa = fsLogic.getFeedbackSession(response.feedbackSessionName,
+                                                                       response.courseId);
             FeedbackQuestionAttributes question = FeedbackQuestionsLogic.inst()
-                    .getFeedbackQuestion(response.feedbackQuestionId);
+                    .getFeedbackQuestion(fsa, response.feedbackQuestionId);
             if (question.recipientType == FeedbackParticipantType.OWN_TEAM_MEMBERS) {
                 returnList.add(response);
             }
@@ -295,8 +297,10 @@ public class SubmissionsAdjustmentTest extends BaseComponentUsingTaskQueueTestCa
                 .getFeedbackResponsesFromGiverForCourse(student.course, student.email);
         
         for (FeedbackResponseAttributes response : studentGiverResponses) {
+            FeedbackSessionAttributes fsa = fsLogic.getFeedbackSession(response.feedbackSessionName,
+                    response.courseId);
             FeedbackQuestionAttributes question = FeedbackQuestionsLogic.inst()
-                    .getFeedbackQuestion(response.feedbackQuestionId);
+                    .getFeedbackQuestion(fsa, response.feedbackQuestionId);
             if (question.giverType == FeedbackParticipantType.TEAMS
                     || question.recipientType == FeedbackParticipantType.OWN_TEAM_MEMBERS) {
                 returnList.add(response);

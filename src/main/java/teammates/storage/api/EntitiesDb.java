@@ -175,15 +175,8 @@ public abstract class EntitiesDb {
     public Object createEntityWithoutExistenceCheck(EntityAttributes entityToAdd)
             throws InvalidParametersException {
         
-        Assumption.assertNotNull(Const.StatusCodes.DBLEVEL_NULL_INPUT, entityToAdd);
+        Object entity = createEntityWithoutExistenceCheckWithoutFlushing(entityToAdd);
         
-        entityToAdd.sanitizeForSaving();
-        
-        if (!entityToAdd.isValid()) {
-            throw new InvalidParametersException(entityToAdd.getInvalidityInfo());
-        }
-        
-        Object entity = entityToAdd.toEntity();
         getPm().makePersistent(entity);
         getPm().flush();
 
@@ -243,6 +236,7 @@ public abstract class EntitiesDb {
 
         getPm().deletePersistent(entity);
         getPm().flush();
+        log.info("delete Entity");
         
         // wait for the operation to persist
         if (Config.PERSISTENCE_CHECK_DURATION > 0) {
@@ -253,12 +247,12 @@ public abstract class EntitiesDb {
                     && elapsedTime < Config.PERSISTENCE_CHECK_DURATION) {
                 ThreadHelper.waitBriefly();
                 entityCheck = getEntity(entityToDelete);
-                
                 isEntityDeleted = entityCheck == null || JDOHelper.isDeleted(entityCheck);
                 //check before incrementing to avoid boundary case problem
                 if (!isEntityDeleted) {
                     elapsedTime += ThreadHelper.WAIT_DURATION;
                 }
+               
             }
             if (elapsedTime >= Config.PERSISTENCE_CHECK_DURATION) {
                 log.info("Operation did not persist in time: delete"

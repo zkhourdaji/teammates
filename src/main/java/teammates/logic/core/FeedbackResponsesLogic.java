@@ -12,6 +12,7 @@ import teammates.common.datatransfer.CourseRoster;
 import teammates.common.datatransfer.FeedbackParticipantType;
 import teammates.common.datatransfer.FeedbackQuestionAttributes;
 import teammates.common.datatransfer.FeedbackResponseAttributes;
+import teammates.common.datatransfer.FeedbackSessionAttributes;
 import teammates.common.datatransfer.StudentAttributes;
 import teammates.common.datatransfer.StudentEnrollDetails;
 import teammates.common.datatransfer.UserType;
@@ -483,7 +484,10 @@ public class FeedbackResponsesLogic {
                 getFeedbackResponsesFromGiverForCourse(courseId, userEmail);
 
         for (FeedbackResponseAttributes response : responsesFromUser) {
-            question = fqLogic.getFeedbackQuestion(response.feedbackQuestionId);
+            FeedbackSessionAttributes fsa = new FeedbackSessionAttributes();
+            fsa.setCourseId(response.courseId);
+            fsa.setFeedbackSessionName(response.feedbackSessionName);
+            question = fqLogic.getFeedbackQuestion(fsa, response.feedbackQuestionId);
             if (question.giverType == FeedbackParticipantType.TEAMS
                     || isRecipientTypeTeamMembers(question)) {
                 frDb.deleteEntity(response);
@@ -494,7 +498,10 @@ public class FeedbackResponsesLogic {
                 getFeedbackResponsesForReceiverForCourse(courseId, userEmail);
 
         for (FeedbackResponseAttributes response : responsesToUser) {
-            question = fqLogic.getFeedbackQuestion(response.feedbackQuestionId);
+            FeedbackSessionAttributes fsa = new FeedbackSessionAttributes();
+            fsa.setCourseId(response.courseId);
+            fsa.setFeedbackSessionName(response.feedbackSessionName);
+            question = fqLogic.getFeedbackQuestion(fsa, response.feedbackQuestionId);
             if (isRecipientTypeTeamMembers(question)) {
                 frDb.deleteEntity(response);
             }
@@ -536,8 +543,11 @@ public class FeedbackResponsesLogic {
     public boolean updateFeedbackResponseForChangingTeam(StudentEnrollDetails enrollment,
             FeedbackResponseAttributes response) throws InvalidParametersException, EntityDoesNotExistException {
 
+        FeedbackSessionAttributes fsa = new FeedbackSessionAttributes();
+        fsa.setCourseId(response.courseId);
+        fsa.setFeedbackSessionName(response.feedbackSessionName);
         FeedbackQuestionAttributes question = fqLogic
-                .getFeedbackQuestion(response.feedbackQuestionId);
+                .getFeedbackQuestion(fsa, response.feedbackQuestionId);
 
         boolean isGiverSameForResponseAndEnrollment = response.giver
                 .equals(enrollment.email);
@@ -642,6 +652,7 @@ public class FeedbackResponsesLogic {
     }
 
     public void deleteFeedbackResponsesForQuestionAndCascade(
+            FeedbackSessionAttributes fsa,
             String feedbackQuestionId, boolean hasResponseRateUpdate) {
         List<FeedbackResponseAttributes> responsesForQuestion =
                 getFeedbackResponsesForQuestion(feedbackQuestionId);
@@ -658,8 +669,7 @@ public class FeedbackResponsesLogic {
         }
 
         try {
-            FeedbackQuestionAttributes question = fqLogic
-                    .getFeedbackQuestion(feedbackQuestionId);
+            FeedbackQuestionAttributes question = fqLogic.getFeedbackQuestion(fsa, feedbackQuestionId);
             boolean isInstructor = question.giverType == FeedbackParticipantType.SELF
                                    || question.giverType == FeedbackParticipantType.INSTRUCTORS;
             for (String email : emails) {

@@ -496,9 +496,9 @@ public class InstructorFeedbackEditPageUiTest extends BaseUiTestCase {
         
         // revert back to state expected by tests after this by deleting new copied questions
         String questionId = BackDoor.getFeedbackQuestion(courseId, feedbackSessionName, 4).getId();
-        BackDoor.deleteFeedbackQuestion(questionId);
+        BackDoor.deleteFeedbackQuestion(courseId, feedbackSessionName, questionId);
         questionId = BackDoor.getFeedbackQuestion(courseId, feedbackSessionName, 3).getId();
-        BackDoor.deleteFeedbackQuestion(questionId);
+        BackDoor.deleteFeedbackQuestion(courseId, feedbackSessionName, questionId);
         
     }
     
@@ -622,7 +622,8 @@ public class InstructorFeedbackEditPageUiTest extends BaseUiTestCase {
 
         // Delete the new question through the backdoor so that it still appears in the browser
         String questionId = BackDoor.getFeedbackQuestion(courseId, feedbackSessionName, 1).getId();
-        String status = BackDoor.deleteFeedbackQuestion(questionId);
+        
+        String status = BackDoor.deleteFeedbackQuestion(courseId, feedbackSessionName, questionId);
         assertEquals(Const.StatusCodes.BACKDOOR_STATUS_SUCCESS, status);
 
         // Edit the deleted question and save

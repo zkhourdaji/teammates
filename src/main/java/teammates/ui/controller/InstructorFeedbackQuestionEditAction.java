@@ -11,6 +11,7 @@ import teammates.common.datatransfer.FeedbackParticipantType;
 import teammates.common.datatransfer.FeedbackQuestionAttributes;
 import teammates.common.datatransfer.FeedbackQuestionDetails;
 import teammates.common.datatransfer.FeedbackQuestionType;
+import teammates.common.datatransfer.FeedbackSessionAttributes;
 import teammates.common.exception.EntityDoesNotExistException;
 import teammates.common.exception.InvalidParametersException;
 import teammates.common.exception.TeammatesException;
@@ -31,8 +32,9 @@ public class InstructorFeedbackQuestionEditAction extends Action {
         Assumption.assertPostParamNotNull(Const.ParamsNames.COURSE_ID, courseId);
         Assumption.assertPostParamNotNull(Const.ParamsNames.FEEDBACK_SESSION_NAME, feedbackSessionName);
         
+        FeedbackSessionAttributes feedbackSession = logic.getFeedbackSession(feedbackSessionName, courseId);
         new GateKeeper().verifyAccessible(logic.getInstructorForGoogleId(courseId, account.googleId),
-                                          logic.getFeedbackSession(feedbackSessionName, courseId),
+                                          feedbackSession,
                                           false, Const.ParamsNames.INSTRUCTOR_PERMISSION_MODIFY_SESSION);
 
         String editType = getRequestParamValue(Const.ParamsNames.FEEDBACK_QUESTION_EDITTYPE);
@@ -47,10 +49,9 @@ public class InstructorFeedbackQuestionEditAction extends Action {
                 Assumption.assertNotNull("Null question text", questionText);
                 Assumption.assertNotEmpty("Empty question text", questionText);
                 
-                editQuestion(updatedQuestion);
+                editQuestion(feedbackSession, updatedQuestion);
             } else if ("delete".equals(editType)) {
-                // branch not tested because if it's not edit or delete, Assumption.fail will cause test failure
-                deleteQuestion(updatedQuestion);
+                deleteQuestion(feedbackSession, updatedQuestion);
             } else {
                 // Assumption.fails are not tested
                 Assumption.fail("Invalid editType");
@@ -65,15 +66,17 @@ public class InstructorFeedbackQuestionEditAction extends Action {
                                             .getInstructorFeedbackEditLink(courseId, feedbackSessionName));
     }
 
-    private void deleteQuestion(FeedbackQuestionAttributes updatedQuestion) {
-        logic.deleteFeedbackQuestion(updatedQuestion.getId());
-        statusToUser.add(new StatusMessage(Const.StatusMessages.FEEDBACK_QUESTION_DELETED, StatusMessageColor.SUCCESS));
+    private void deleteQuestion(FeedbackSessionAttributes session, FeedbackQuestionAttributes updatedQuestion) {
+        logic.deleteFeedbackQuestion(session, updatedQuestion.getId());
+        statusToUser.add(
+                new StatusMessage(Const.StatusMessages.FEEDBACK_QUESTION_DELETED, StatusMessageColor.SUCCESS));
         statusToAdmin = "Feedback Question " + updatedQuestion.questionNumber + " for session:<span class=\"bold\">("
                         + updatedQuestion.feedbackSessionName + ")</span> for Course <span class=\"bold\">["
                         + updatedQuestion.courseId + "]</span> deleted.<br>";
     }
 
-    private void editQuestion(FeedbackQuestionAttributes updatedQuestion) throws InvalidParametersException,
+    private void editQuestion(FeedbackSessionAttributes feedbackSession, 
+                              FeedbackQuestionAttributes updatedQuestion) throws InvalidParametersException,
                                                                                  EntityDoesNotExistException {
         String err = validateQuestionGiverRecipientVisibility(updatedQuestion);
         
@@ -91,7 +94,7 @@ public class InstructorFeedbackQuestionEditAction extends Action {
         }
 
         if (questionDetailsErrors.isEmpty()) {
-            logic.updateFeedbackQuestionNumber(updatedQuestion);
+            logic.updateFeedbackQuestionNumber(feedbackSession, updatedQuestion);
             
             statusToUser.add(new StatusMessage(Const.StatusMessages.FEEDBACK_QUESTION_EDITED, StatusMessageColor.SUCCESS));
             statusToAdmin = "Feedback Question " + updatedQuestion.questionNumber

@@ -136,12 +136,13 @@ public class BackDoorLogic extends Logic {
         accountsDb.createAccounts(studentAccounts, false);
         studentsDb.createStudentsWithoutSearchability(students.values());
         
-
+        System.out.println("created students!!");
         HashMap<String, FeedbackSessionAttributes> sessions = dataBundle.feedbackSessions;
         for (FeedbackSessionAttributes session : sessions.values()) {
             cleanSessionData(session);
         }
         fbDb.createFeedbackSessions(sessions.values());
+        System.out.println("created sessions!!");
         
         HashMap<String, FeedbackQuestionAttributes> questions = dataBundle.feedbackQuestions;
         List<FeedbackQuestionAttributes> questionList = new ArrayList<FeedbackQuestionAttributes>(questions.values());
@@ -318,9 +319,10 @@ public class BackDoorLogic extends Logic {
         return Utils.getTeammatesGson().toJson(fq);
     }
     
-    public String getFeedbackQuestionForIdAsJson(String questionId) {
+    public String getFeedbackQuestionForIdAsJson(String feedbackSessionName, String courseId, String questionId) {
+        FeedbackSessionAttributes fsa = feedbackSessionsLogic.getFeedbackSession(feedbackSessionName, courseId);
         FeedbackQuestionAttributes fq =
-                feedbackQuestionsLogic.getFeedbackQuestion(questionId);
+                feedbackQuestionsLogic.getFeedbackQuestion(fsa, questionId);
         return Utils.getTeammatesGson().toJson(fq);
     }
 

@@ -588,8 +588,13 @@ public class FeedbackConstantSumQuestionDetails extends FeedbackQuestionDetails 
         }
         
         String fqId = responses.get(0).feedbackQuestionId;
+        String courseId = responses.get(0).courseId;
+        String feedbackSessionName = responses.get(0).feedbackSessionName;
+        FeedbackSessionAttributes fsa = new FeedbackSessionAttributes();
+        fsa.setCourseId(courseId);
+        fsa.setFeedbackSessionName(feedbackSessionName);
         FeedbackQuestionsLogic fqLogic = FeedbackQuestionsLogic.inst();
-        FeedbackQuestionAttributes fqa = fqLogic.getFeedbackQuestion(fqId);
+        FeedbackQuestionAttributes fqa = fqLogic.getFeedbackQuestion(fsa, fqId);
         
         int numOfResponseSpecific = fqa.numberOfEntitiesToGiveFeedbackTo;
         int maxResponsesPossible = numRecipients;

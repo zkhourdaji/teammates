@@ -112,6 +112,10 @@ public class FeedbackSession {
     @Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", value="questionNumber asc"))
     private List<Question> feedbackQuestions;
     
+    public List<Question> getFeedbackQuestions() {
+        return feedbackQuestions;
+    }
+
     public FeedbackSession(String feedbackSessionName, String courseId,
             String creatorEmail, Text instructions, Date createdTime, Date startTime, Date endTime,
             Date sessionVisibleFromTime, Date resultsVisibleFromTime, double timeZone, int gracePeriod,
@@ -131,6 +135,8 @@ public class FeedbackSession {
             boolean isOpeningEmailEnabled, boolean isClosingEmailEnabled, boolean isPublishedEmailEnabled, 
             Set<String> instructorList, Set<String> studentList,
             List<Question> questions) {
+        System.out.println("FS consstructor");
+        System.out.println(questions.size());
         this.feedbackSessionName = feedbackSessionName;
         this.courseId = courseId;
         this.creatorEmail = creatorEmail;
@@ -337,14 +343,6 @@ public class FeedbackSession {
         this.respondingStudentList = studentList;
     }
     
-    public List<Question> getFeedbackQuestions() {
-        return feedbackQuestions;
-    }
-    
-    public void setFeedbackQuestion(List<Question> questions) {
-        this.feedbackQuestions = questions;
-    }
-
     @Override
     public String toString() {
         return "FeedbackSession [feedbackSessionName=" + feedbackSessionName

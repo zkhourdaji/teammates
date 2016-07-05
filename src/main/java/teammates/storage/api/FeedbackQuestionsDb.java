@@ -61,16 +61,14 @@ public class FeedbackQuestionsDb extends EntitiesDb {
         return new FeedbackQuestionAttributes(fq);
     }
 
-    public FeedbackQuestionAttributes createFeedbackQuestion(
+    public void createFeedbackQuestion(
             FeedbackSessionAttributes fsa, 
             FeedbackQuestionAttributes question) 
                     throws InvalidParametersException, EntityDoesNotExistException {
         
         Object obj = this.createEntityWithoutExistenceCheckWithoutFlushing(question);
-        fsa.addQuestion(question);
-        new FeedbackSessionsDb().updateFeedbackSession(fsa); // this flushes
-        
-        return new FeedbackQuestionAttributes((Question) obj);
+        //fsa.addQuestion(question);
+        new FeedbackSessionsDb().addQuestionToSession(fsa, question);
     }
     
     /**
@@ -113,8 +111,7 @@ public class FeedbackQuestionsDb extends EntitiesDb {
     }
     
     public List<FeedbackQuestionAttributes> getFeedbackQuestionsForSession(FeedbackSession feedbackSession) {
-        List<Question> questions = feedbackSession.getFeedbackQuestions();
-        return getFeedbackQuestionAttributesFromFeedbackQuestions(questions);
+        return getFeedbackQuestionAttributesFromFeedbackQuestions(feedbackSession.getFeedbackQuestions());
     }
 
     public static List<FeedbackQuestionAttributes> getFeedbackQuestionAttributesFromFeedbackQuestions(

@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang3.math.Fraction;
+
 import teammates.common.datatransfer.CommentAttributes;
 import teammates.common.datatransfer.CommentParticipantType;
 import teammates.common.datatransfer.CommentSearchResultBundle;
@@ -20,6 +22,7 @@ import teammates.common.datatransfer.FeedbackParticipantType;
 import teammates.common.datatransfer.FeedbackQuestionAttributes;
 import teammates.common.datatransfer.FeedbackResponseAttributes;
 import teammates.common.datatransfer.FeedbackResponseCommentAttributes;
+import teammates.common.datatransfer.FeedbackSessionAttributes;
 import teammates.common.datatransfer.InstructorAttributes;
 import teammates.common.datatransfer.StudentAttributes;
 import teammates.common.exception.EntityAlreadyExistsException;
@@ -714,7 +717,10 @@ public class CommentsLogic {
             Map<String, FeedbackQuestionAttributes> feedbackQuestionsTable, FeedbackResponseCommentAttributes frc) {
         FeedbackQuestionAttributes relatedQuestion = feedbackQuestionsTable.get(frc.feedbackQuestionId);
         if (relatedQuestion == null) {
-            relatedQuestion = fqLogic.getFeedbackQuestion(frc.feedbackQuestionId);
+            FeedbackSessionAttributes fsa = new FeedbackSessionAttributes();
+            fsa.setCourseId(frc.courseId);
+            fsa.setFeedbackSessionName(frc.feedbackSessionName);
+            relatedQuestion = fqLogic.getFeedbackQuestion(fsa, frc.feedbackQuestionId);
             feedbackQuestionsTable.put(frc.feedbackQuestionId, relatedQuestion);
         }
         return relatedQuestion;

@@ -9,9 +9,17 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.jdo.JDOHelper;
+import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.Query;
 
+
+
+
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
+
 import teammates.common.datatransfer.EntityAttributes;
+import teammates.common.datatransfer.FeedbackQuestionAttributes;
 import teammates.common.datatransfer.FeedbackSessionAttributes;
 import teammates.common.datatransfer.FeedbackSessionType;
 import teammates.common.exception.EntityDoesNotExistException;
@@ -266,12 +274,25 @@ public class FeedbackSessionsDb extends EntitiesDb {
         fs.setSendClosingEmail(newAttributes.isClosingEmailEnabled());
         fs.setSendPublishedEmail(newAttributes.isPublishedEmailEnabled());
         
-        fs.setFeedbackQuestion(
-                FeedbackQuestionsDb.getFeedbackQuestionEntitiesFromFeedbackQuestionAttributes(
-                        newAttributes.getQuestions()));
-                
         log.info(newAttributes.getBackupIdentifier());
         getPm().close();
+    }
+    
+    public void addQuestionToSession(FeedbackSessionAttributes existingSession, FeedbackQuestionAttributes question) 
+            throws EntityDoesNotExistException {
+        getPm().currentTransaction().begin();
+        FeedbackSession fs = (FeedbackSession) getEntity(existingSession);
+        
+        if (fs == null) {
+            throw new EntityDoesNotExistException(
+                    ERROR_UPDATE_NON_EXISTENT + existingSession.toString());
+        }
+        
+        fs.getFeedbackQuestions().add(question.toEntity());
+        System.out.println(fs.getFeedbackQuestions().size());
+        System.out.println("&^^&&^&^&");
+        System.out.println(fs.getFeedbackQuestions().size());
+        getPm().currentTransaction().commit();
     }
 
     public void addInstructorRespondant(String email, FeedbackSessionAttributes feedbackSession)
@@ -557,20 +578,15 @@ public class FeedbackSessionsDb extends EntitiesDb {
     }
     
     private FeedbackSession getFeedbackSessionEntity(String feedbackSessionName, String courseId) {
-        
-        Query q = getPm().newQuery(FeedbackSession.class);
-        q.declareParameters("String feedbackSessionNameParam, String courseIdParam");
-        q.setFilter("feedbackSessionName == feedbackSessionNameParam && courseId == courseIdParam");
-
-        @SuppressWarnings("unchecked")
-        List<FeedbackSession> feedbackSessionList =
-                (List<FeedbackSession>) q.execute(feedbackSessionName, courseId);
-        
-        if (feedbackSessionList.isEmpty() || JDOHelper.isDeleted(feedbackSessionList.get(0))) {
+        Key key = KeyFactory.createKey(FeedbackSession.class.getSimpleName(), 
+                feedbackSessionName + "%" + courseId);
+        try {
+            FeedbackSession fs = getPm().getObjectById(FeedbackSession.class, key);
+            return fs;
+        } catch (JDOObjectNotFoundException e) {
+            // return null to be consistent with the other EntitiesDb
             return null;
         }
-    
-        return feedbackSessionList.get(0);
     }
 
     @Override

@@ -259,7 +259,7 @@ public class FeedbackSessionsLogicTest extends BaseComponentTestCase {
         assertEquals(0, sessionList.size());
     }
     
-    public void testCreateAndDeleteFeedbackSession() throws InvalidParametersException, EntityAlreadyExistsException {
+    public void testCreateAndDeleteFeedbackSession() throws InvalidParametersException, EntityAlreadyExistsException, EntityDoesNotExistException {
         ______TS("test create");
         
         FeedbackSessionAttributes fs = getNewFeedbackSession();
@@ -307,7 +307,7 @@ public class FeedbackSessionsLogicTest extends BaseComponentTestCase {
         fq.showRecipientNameTo = new ArrayList<FeedbackParticipantType>();
         fq.showGiverNameTo = new ArrayList<FeedbackParticipantType>();
         
-        fqLogic.createFeedbackQuestion(fq);
+        fqLogic.createFeedbackQuestion(fs, fq);
         
         fsLogic.deleteFeedbackSessionCascade(fs.getFeedbackSessionName(), fs.getCourseId());
         verifyAbsentInDatastore(fs);

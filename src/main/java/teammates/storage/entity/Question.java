@@ -119,6 +119,25 @@ public class Question implements StoreCallback {
         this.showRecipientNameTo = showRecipientNameTo;
         this.setCreatedAt(new Date());
     }
+    
+    public Question(
+            FeedbackQuestion oldQuestion) {
+        
+        this.feedbackQuestionId = oldQuestion.getId(); 
+        this.feedbackSessionName = oldQuestion.getFeedbackSessionName();
+        this.courseId = oldQuestion.getCourseId();
+        this.questionMetaData = oldQuestion.getQuestionMetaData();
+        this.questionNumber = oldQuestion.getQuestionNumber();
+        this.questionType = oldQuestion.getQuestionType();
+        this.giverType = oldQuestion.getGiverType();
+        this.recipientType = oldQuestion.getRecipientType();
+        this.numberOfEntitiesToGiveFeedbackTo = oldQuestion.getNumberOfEntitiesToGiveFeedbackTo();
+        this.showResponsesTo = oldQuestion.getShowResponsesTo();
+        this.showGiverNameTo = oldQuestion.getShowGiverNameTo();
+        this.showRecipientNameTo = oldQuestion.getShowRecipientNameTo();
+        this.setCreatedAt(oldQuestion.getCreatedAt());
+        this.setLastUpdate(oldQuestion.getUpdatedAt());
+    }
 
     public Date getCreatedAt() {
         return (createdAt == null) ? Const.TIME_REPRESENTS_DEFAULT_TIMESTAMP : createdAt;

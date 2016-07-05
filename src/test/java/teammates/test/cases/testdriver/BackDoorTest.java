@@ -11,6 +11,7 @@ import teammates.common.datatransfer.CourseAttributes;
 import teammates.common.datatransfer.DataBundle;
 import teammates.common.datatransfer.FeedbackQuestionAttributes;
 import teammates.common.datatransfer.FeedbackResponseAttributes;
+import teammates.common.datatransfer.FeedbackSessionAttributes;
 import teammates.common.datatransfer.InstructorAttributes;
 import teammates.common.datatransfer.StudentAttributes;
 import teammates.common.datatransfer.StudentProfileAttributes;
@@ -66,6 +67,7 @@ public class BackDoorTest extends BaseTestCase {
         assertEquals(Const.StatusCodes.BACKDOOR_STATUS_SUCCESS, status);
 
         // ----------deleting Feedback Response entities-------------------------
+        FeedbackSessionAttributes fsa = dataBundle.feedbackSessions.get("session1InCourse1");
         FeedbackQuestionAttributes fq = dataBundle.feedbackQuestions.get("qn2InSession1InCourse1");
         FeedbackResponseAttributes fr = dataBundle.feedbackResponses.get("response1ForQ2S1C1");
         fq = BackDoor.getFeedbackQuestion(fq.courseId, fq.feedbackSessionName, fq.questionNumber);
@@ -79,7 +81,7 @@ public class BackDoorTest extends BaseTestCase {
         // ----------deleting Feedback Question entities-------------------------
         fq = dataBundle.feedbackQuestions.get("qn1InSession1InCourse1");
         verifyPresentInDatastore(fq);
-        status = BackDoor.deleteFeedbackQuestion(fq.getId());
+        status = BackDoor.deleteFeedbackQuestion(fsa.getCourseId(), fsa.getFeedbackSessionName(), fq.getId());
         assertEquals(Const.StatusCodes.BACKDOOR_STATUS_SUCCESS, status);
         verifyAbsentInDatastore(fq);
 
@@ -378,7 +380,7 @@ public class BackDoorTest extends BaseTestCase {
     }
 
     private void verifyAbsentInDatastore(FeedbackQuestionAttributes fq) {
-        assertEquals("null", BackDoor.getFeedbackQuestionForIdAsJson(fq.getId()));
+        assertEquals("null", BackDoor.getFeedbackQuestionForIdAsJson(fq.feedbackSessionName, fq.courseId, fq.getId()));
     }
     
     private void verifyAbsentInDatastore(FeedbackResponseAttributes fr) {

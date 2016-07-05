@@ -11,6 +11,7 @@ import teammates.common.datatransfer.FeedbackParticipantType;
 import teammates.common.datatransfer.FeedbackQuestionAttributes;
 import teammates.common.datatransfer.FeedbackQuestionDetails;
 import teammates.common.datatransfer.FeedbackQuestionType;
+import teammates.common.datatransfer.FeedbackSessionAttributes;
 import teammates.common.datatransfer.FeedbackTextQuestionDetails;
 import teammates.common.exception.EntityAlreadyExistsException;
 import teammates.common.exception.EntityDoesNotExistException;
@@ -170,8 +171,10 @@ public class FeedbackQuestionsDbTest extends BaseComponentTestCase {
         assertEquals(expected.toString(), actual.toString());
 
         ______TS("get non-existent question by id");
-
-        actual = fqDb.getFeedbackQuestion("non-existent id");
+        FeedbackSessionAttributes fs = new FeedbackSessionAttributes();
+        fs.setCourseId(expected.courseId);
+        fs.setFeedbackSessionName(expected.feedbackSessionName);
+        actual = fqDb.getFeedbackQuestion(fs, "non-existent id");
 
         assertNull(actual);
     }

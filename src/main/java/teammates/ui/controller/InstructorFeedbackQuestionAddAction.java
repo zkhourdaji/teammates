@@ -8,7 +8,9 @@ import teammates.common.datatransfer.FeedbackParticipantType;
 import teammates.common.datatransfer.FeedbackQuestionAttributes;
 import teammates.common.datatransfer.FeedbackQuestionDetails;
 import teammates.common.datatransfer.FeedbackQuestionType;
+import teammates.common.datatransfer.FeedbackSessionAttributes;
 import teammates.common.datatransfer.InstructorAttributes;
+import teammates.common.exception.EntityDoesNotExistException;
 import teammates.common.exception.InvalidParametersException;
 import teammates.common.util.Assumption;
 import teammates.common.util.Const;
@@ -25,8 +27,9 @@ public class InstructorFeedbackQuestionAddAction extends Action {
         String feedbackSessionName = getRequestParamValue(Const.ParamsNames.FEEDBACK_SESSION_NAME);
         InstructorAttributes instructorDetailForCourse = logic.getInstructorForGoogleId(courseId, account.googleId);
 
+        FeedbackSessionAttributes feedbackSession = logic.getFeedbackSession(feedbackSessionName, courseId);
         new GateKeeper().verifyAccessible(instructorDetailForCourse,
-                                          logic.getFeedbackSession(feedbackSessionName, courseId),
+                                          feedbackSession,
                                           false, Const.ParamsNames.INSTRUCTOR_PERMISSION_MODIFY_SESSION);
 
         FeedbackQuestionAttributes feedbackQuestion = extractFeedbackQuestionData(requestParameters,
@@ -57,7 +60,7 @@ public class InstructorFeedbackQuestionAddAction extends Action {
         }
 
         try {
-            logic.createFeedbackQuestion(feedbackQuestion);
+            logic.createFeedbackQuestion(feedbackSession, feedbackQuestion);
             statusToUser.add(new StatusMessage(Const.StatusMessages.FEEDBACK_QUESTION_ADDED, StatusMessageColor.SUCCESS));
             statusToAdmin = "Created Feedback Question for Feedback Session:<span class=\"bold\">("
                           + feedbackQuestion.feedbackSessionName + ")</span> for Course <span class=\"bold\">["
@@ -65,11 +68,11 @@ public class InstructorFeedbackQuestionAddAction extends Action {
                           + "<span class=\"bold\">"
                           + feedbackQuestion.getQuestionDetails().getQuestionTypeDisplayName()
                           + ":</span> " + feedbackQuestion.getQuestionDetails().getQuestionText();
-        } catch (InvalidParametersException e) {
+        } catch (InvalidParametersException | EntityDoesNotExistException e) {
             statusToUser.add(new StatusMessage(e.getMessage(), StatusMessageColor.DANGER));
             statusToAdmin = e.getMessage();
             isError = true;
-        }
+        } 
         return redirectResult;
     }
 

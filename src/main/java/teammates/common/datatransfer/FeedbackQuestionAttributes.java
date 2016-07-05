@@ -80,8 +80,10 @@ public class FeedbackQuestionAttributes extends EntityAttributes implements Comp
     @Override
     public Question toEntity() {
         String questionId = Sanitizer.sanitizeForUri(courseId)
-                            + "-" + Sanitizer.sanitizeForUri(feedbackSessionName)
-                            + "-" + questionNumber;
+                            + "/" + Sanitizer.sanitizeForUri(feedbackSessionName)
+                            + "/" + questionNumber;
+        System.out.println("question id is ");
+        System.out.println(questionId);
         return new Question(questionId, 
                             feedbackSessionName, courseId, creatorEmail,
                             questionMetaData, questionNumber, questionType, giverType,
