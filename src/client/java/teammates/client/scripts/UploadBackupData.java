@@ -25,6 +25,7 @@ import teammates.common.datatransfer.FeedbackSessionAttributes;
 import teammates.common.datatransfer.InstructorAttributes;
 import teammates.common.datatransfer.StudentAttributes;
 import teammates.common.datatransfer.StudentProfileAttributes;
+import teammates.common.exception.EntityDoesNotExistException;
 import teammates.common.exception.InvalidParametersException;
 import teammates.common.util.Utils;
 import teammates.logic.api.Logic;
@@ -230,11 +231,14 @@ public class UploadBackupData extends RemoteApiClient {
         }
     }
     
-    private static void persistFeedbackQuestions(HashMap<String, FeedbackQuestionAttributes> map) {
+    private static void persistFeedbackQuestions(HashMap<String, FeedbackQuestionAttributes> map) throws EntityDoesNotExistException {
         HashMap<String, FeedbackQuestionAttributes> questions = map;
 
         try {
-            fqDb.createFeedbackQuestions(questions.values());
+            for (FeedbackQuestionAttributes question : questions.values()) {
+                FeedbackSessionAttributes fsa = fbDb.getFeedbackSession(question.getCourseId(), question.getFeedbackSessionName());
+                fqDb.createFeedbackQuestion(fsa, question);
+            }
             
             for (FeedbackQuestionAttributes question : questions.values()) {
                 feedbackQuestionsPersisted.put(question.getId(), question);

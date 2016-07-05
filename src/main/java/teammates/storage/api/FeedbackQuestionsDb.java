@@ -28,19 +28,46 @@ import teammates.storage.entity.FeedbackSession;
 public class FeedbackQuestionsDb extends EntitiesDb {
     public static final String ERROR_UPDATE_NON_EXISTENT = "Trying to update non-existent Feedback Question : ";
     
-    public void createFeedbackQuestions(Collection<FeedbackQuestionAttributes> questionsToAdd)
-            throws InvalidParametersException {
-        List<EntityAttributes> questionsToUpdate = createEntities(questionsToAdd);
-        for (EntityAttributes entity : questionsToUpdate) {
-            FeedbackQuestionAttributes question = (FeedbackQuestionAttributes) entity;
-            try {
-                updateFeedbackQuestion(question);
-            } catch (EntityDoesNotExistException e) {
-                // This situation is not tested as replicating such a situation is
-                // difficult during testing
-                Assumption.fail("Entity found be already existing and not existing simultaneously");
-            }
+    @Override
+    public List<EntityAttributes> createEntities(Collection<? extends EntityAttributes> entitiesToAdd) {
+        Assumption.fail(
+                "Use createFeedbackQuestions(FeedbackSessionAttributes, Collection<FeedbackQuestionAttributes>)");
+        return null;
+    }
+    
+    @Override
+    public Object createEntity(EntityAttributes entityToAdd)
+            throws InvalidParametersException, EntityAlreadyExistsException {
+        Assumption.fail(
+                "Use addQuestionToSession(FeedbackSessionAttributes, FeedbackQuestionAttributes)");
+        return null;
+    }
+    
+    public void createFeedbackQuestions(FeedbackSessionAttributes session,
+                Collection<FeedbackQuestionAttributes> questionsToAdd)
+            throws InvalidParametersException, EntityDoesNotExistException {
+        
+        getPm().currentTransaction().begin();
+        FeedbackSession fs = new FeedbackSessionsDb().getEntity(session);
+        
+        if (fs == null) {
+            throw new EntityDoesNotExistException(
+                    ERROR_UPDATE_NON_EXISTENT + session.toString());
         }
+        
+        for (FeedbackQuestionAttributes questionToAdd : questionsToAdd) {
+            questionToAdd.sanitizeForSaving();
+            
+            if (!questionToAdd.isValid()) {
+                throw new InvalidParametersException(questionToAdd.getInvalidityInfo());
+            }
+            
+            fs.getFeedbackQuestions().add(questionToAdd.toEntity());
+            
+            log.info(questionToAdd.getBackupIdentifier());
+        }
+        
+        getPm().currentTransaction().commit();
     }
     
     /**
@@ -67,7 +94,6 @@ public class FeedbackQuestionsDb extends EntitiesDb {
             FeedbackQuestionAttributes question) 
                     throws InvalidParametersException, EntityDoesNotExistException {
         
-        Object obj = this.createEntityWithoutExistenceCheckWithoutFlushing(question);
         new FeedbackSessionsDb().addQuestionToSession(fsa, question);
     }
     

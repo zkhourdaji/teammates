@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -142,7 +144,6 @@ public class BackDoorLogic extends Logic {
             cleanSessionData(session);
         }
         fbDb.createFeedbackSessions(sessions.values());
-        System.out.println("created sessions!!");
         
         HashMap<String, FeedbackQuestionAttributes> questions = dataBundle.feedbackQuestions;
         List<FeedbackQuestionAttributes> questionList = new ArrayList<FeedbackQuestionAttributes>(questions.values());
@@ -150,7 +151,13 @@ public class BackDoorLogic extends Logic {
         for (FeedbackQuestionAttributes question : questionList) {
             question.removeIrrelevantVisibilityOptions();
         }
-        fqDb.createFeedbackQuestions(questionList);
+        Map<String, FeedbackSessionAttributes> sessionsFromId = mapSessionIdToSession(sessions);
+        Map<String, List<FeedbackQuestionAttributes>> sessionQuestions =
+                mapSessionIdToQuestions(sessions, questionList);
+        for (Entry<String, List<FeedbackQuestionAttributes>> questionsOfSession : sessionQuestions.entrySet()) {
+            String sessionId = questionsOfSession.getKey();
+            fqDb.createFeedbackQuestions(sessionsFromId.get(sessionId), questionsOfSession.getValue());
+        }
         
         HashMap<String, FeedbackResponseAttributes> responses = dataBundle.feedbackResponses;
         for (FeedbackResponseAttributes response : responses.values()) {
@@ -186,6 +193,42 @@ public class BackDoorLogic extends Logic {
         
         
         return Const.StatusCodes.BACKDOOR_STATUS_SUCCESS;
+    }
+
+    private Map<String, List<FeedbackQuestionAttributes>> mapSessionIdToQuestions(
+            HashMap<String, FeedbackSessionAttributes> sessions, List<FeedbackQuestionAttributes> questionList) {
+        Map<String, List<FeedbackQuestionAttributes>> sessionQuestions = mapSessionIdToEmptyList(sessions);
+        for (FeedbackQuestionAttributes question : questionList) {
+            String sessionId =
+                    FeedbackSessionAttributes.makeId(question.feedbackSessionName, question.courseId);
+            sessionQuestions.get(sessionId).add(question);
+        }
+        return sessionQuestions;
+    }
+
+    private Map<String, FeedbackSessionAttributes> mapSessionIdToSession(
+            HashMap<String, FeedbackSessionAttributes> sessions) {
+        Map<String, FeedbackSessionAttributes> sessionsFromId = new HashMap<>();
+        for (FeedbackSessionAttributes session : sessions.values()) {
+            String sessionId = session.getId();
+            if (!sessionsFromId.containsKey(sessionId)) {
+                sessionsFromId.put(sessionId, session);
+            }
+        }
+        return sessionsFromId;
+    }
+
+    private Map<String, List<FeedbackQuestionAttributes>> mapSessionIdToEmptyList(
+            HashMap<String, FeedbackSessionAttributes> sessions) {
+        Map<String, List<FeedbackQuestionAttributes>> sessionQuestions = new HashMap<>();
+        for (FeedbackSessionAttributes session : sessions.values()) {
+            String sessionId = session.getId();
+            if (!sessionQuestions.containsKey(sessionId)) {
+                sessionQuestions.put(sessionId,
+                                     new ArrayList<FeedbackQuestionAttributes>());
+            }
+        }
+        return sessionQuestions;
     }
 
     /**
