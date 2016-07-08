@@ -109,7 +109,7 @@ public class Question implements StoreCallback {
             List<FeedbackParticipantType> showGiverNameTo,
             List<FeedbackParticipantType> showRecipientNameTo) {
         
-        this.feedbackQuestionId = questionId; // Allow GAE to generate key.
+        this.feedbackQuestionId = questionId;
         this.feedbackSessionName = feedbackSessionName;
         this.courseId = courseId;
         this.creatorEmail = creatorEmail;
