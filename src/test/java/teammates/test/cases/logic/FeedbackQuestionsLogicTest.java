@@ -231,7 +231,6 @@ public class FeedbackQuestionsLogicTest extends BaseComponentTestCase {
         //Appends a question to the back of the current question list
         FeedbackQuestionAttributes newQuestion = getQuestionFromDatastore("qn1InSession1InCourse1");
         newQuestion.questionNumber = 5;
-        newQuestion.setId(null); //new question should not have an ID.
         fqLogic.createFeedbackQuestion(session, newQuestion);
         
         List<FeedbackQuestionAttributes> actualList =

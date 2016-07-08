@@ -36,11 +36,11 @@ public class FeedbackQuestionsDbTest extends BaseComponentTestCase {
         ______TS("success : created");
 
         FeedbackQuestionAttributes fq = getNewFeedbackQuestionAttributes();
-        
+        FeedbackSessionAttributes fsa = getNewFeedbackSessionAttributes(); 
         // remove possibly conflicting entity from the database
         fqDb.deleteEntity(fq);
         
-        fqDb.createEntity(fq);
+        fqDb.createFeedbackQuestion(fsa, fq);
         verifyPresentInDatastore(fq, true);
         
         String feedbackSessionName = fq.feedbackSessionName;
@@ -353,6 +353,16 @@ public class FeedbackQuestionsDbTest extends BaseComponentTestCase {
         fqDb.deleteEntity(modifiedQuestion);
     }
 
+    private FeedbackSessionAttributes getNewFeedbackSessionAttributes() {
+        FeedbackSessionAttributes fsa = new FeedbackSessionAttributes();
+
+        fsa.setCourseId("testCourse");
+        fsa.setCreatorEmail("instructor@email.com");
+        fsa.setFeedbackSessionName("testFeedbackSession");
+        
+        return fsa;
+    }
+    
     private FeedbackQuestionAttributes getNewFeedbackQuestionAttributes() {
         FeedbackQuestionAttributes fqa = new FeedbackQuestionAttributes();
 
