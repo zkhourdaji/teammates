@@ -13,6 +13,7 @@ import javax.jdo.JDOHelper;
 import teammates.client.remoteapi.RemoteApiClient;
 import teammates.common.datatransfer.FeedbackQuestionAttributes;
 import teammates.common.datatransfer.FeedbackSessionAttributes;
+import teammates.common.exception.EntityAlreadyExistsException;
 import teammates.common.exception.EntityDoesNotExistException;
 import teammates.logic.api.Logic;
 import teammates.logic.core.FeedbackSessionsLogic;
@@ -64,7 +65,7 @@ public class DataMigrationForFeedbackQuestions extends RemoteApiClient {
             
             try {
                 new FeedbackSessionsDb().addQuestionToSession(session, old);
-            } catch (EntityDoesNotExistException e) {
+            } catch (EntityDoesNotExistException | EntityAlreadyExistsException e) {
                 e.printStackTrace();
                 throw new RuntimeException(
                         String.format("Unable to update existing session %s with question %s",

@@ -98,9 +98,15 @@ public class FeedbackQuestionsDb extends EntitiesDb {
     }
 
     public void createFeedbackQuestion(FeedbackSessionAttributes fsa, FeedbackQuestionAttributes question) 
-            throws InvalidParametersException, EntityDoesNotExistException {
+            throws InvalidParametersException, EntityDoesNotExistException, EntityAlreadyExistsException {
         
         new FeedbackSessionsDb().addQuestionToSession(fsa, question);
+    }
+    
+    public void createFeedbackQuestionWithoutExistenceCheck(FeedbackSessionAttributes fsa, FeedbackQuestionAttributes question) 
+            throws InvalidParametersException, EntityDoesNotExistException {
+        
+        new FeedbackSessionsDb().addQuestionToSessionWithoutExistenceCheck(fsa, question);
     }
     
     /**

@@ -113,6 +113,9 @@ public class FeedbackSession {
     private List<Question> feedbackQuestions;
     
     public List<Question> getFeedbackQuestions() {
+        if (feedbackQuestions == null) {
+            feedbackQuestions = new ArrayList<>();
+        }
         return feedbackQuestions;
     }
 
@@ -135,8 +138,6 @@ public class FeedbackSession {
             boolean isOpeningEmailEnabled, boolean isClosingEmailEnabled, boolean isPublishedEmailEnabled, 
             Set<String> instructorList, Set<String> studentList,
             List<Question> questions) {
-        System.out.println("FS consstructor");
-        System.out.println(questions.size());
         this.feedbackSessionName = feedbackSessionName;
         this.courseId = courseId;
         this.creatorEmail = creatorEmail;

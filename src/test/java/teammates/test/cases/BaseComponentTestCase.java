@@ -164,6 +164,7 @@ public class BaseComponentTestCase extends BaseTestCase {
         
         // TODO remove setting questions to empty and assert questions are correct
         actual.setQuestions(Collections.<FeedbackQuestionAttributes> emptyList());
+        expected.setQuestions(Collections.<FeedbackQuestionAttributes> emptyList());
         assertEquals(gson.toJson(expected), gson.toJson(actual));
     }
 

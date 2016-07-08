@@ -152,8 +152,6 @@ public class FeedbackSessionAttributes extends EntityAttributes implements Sessi
 
     @Override
     public FeedbackSession toEntity() {
-        System.out.println("FSA toentity");
-        System.out.println(getIdentificationString());
         return new FeedbackSession(
                feedbackSessionName, courseId, creatorEmail, instructions, createdTime,
                startTime, endTime, sessionVisibleFromTime, resultsVisibleFromTime,
@@ -699,11 +697,5 @@ public class FeedbackSessionAttributes extends EntityAttributes implements Sessi
     
     public void setQuestions(List<FeedbackQuestionAttributes> questions) {
         this.questions = questions;
-    }
-
-    public void addQuestion(FeedbackQuestionAttributes obj) {
-        System.out.println("FSA add questions");
-        System.out.println(questions.size());
-        questions.add(obj);
     }
 }

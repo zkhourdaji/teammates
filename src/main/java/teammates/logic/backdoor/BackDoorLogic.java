@@ -138,7 +138,6 @@ public class BackDoorLogic extends Logic {
         accountsDb.createAccounts(studentAccounts, false);
         studentsDb.createStudentsWithoutSearchability(students.values());
         
-        System.out.println("created students!!");
         HashMap<String, FeedbackSessionAttributes> sessions = dataBundle.feedbackSessions;
         for (FeedbackSessionAttributes session : sessions.values()) {
             cleanSessionData(session);

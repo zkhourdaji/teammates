@@ -237,7 +237,7 @@ public class UploadBackupData extends RemoteApiClient {
         try {
             for (FeedbackQuestionAttributes question : questions.values()) {
                 FeedbackSessionAttributes fsa = fbDb.getFeedbackSession(question.getCourseId(), question.getFeedbackSessionName());
-                fqDb.createFeedbackQuestion(fsa, question);
+                fqDb.createFeedbackQuestionWithoutExistenceCheck(fsa, question);
             }
             
             for (FeedbackQuestionAttributes question : questions.values()) {

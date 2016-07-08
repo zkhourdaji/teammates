@@ -80,7 +80,7 @@ public class FeedbackQuestionsLogic {
             FeedbackQuestionAttributes fqa, int questionNumber) throws InvalidParametersException, EntityDoesNotExistException {
         fqa.questionNumber = questionNumber;
         fqa.removeIrrelevantVisibilityOptions();
-        fqDb.createFeedbackQuestion(fsa, fqa);
+        fqDb.createFeedbackQuestionWithoutExistenceCheck(fsa, fqa);
     }
     
     public FeedbackQuestionAttributes copyFeedbackQuestion(

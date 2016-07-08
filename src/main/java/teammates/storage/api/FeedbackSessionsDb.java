@@ -283,7 +283,7 @@ public class FeedbackSessionsDb extends EntitiesDb {
     
     public void addQuestionToSession(
                 FeedbackSessionAttributes existingSession, FeedbackQuestionAttributes question) 
-            throws EntityDoesNotExistException {
+            throws EntityDoesNotExistException, EntityAlreadyExistsException {
         
         Transaction txn = getPm().currentTransaction();
         try {
@@ -296,6 +296,13 @@ public class FeedbackSessionsDb extends EntitiesDb {
                         ERROR_UPDATE_NON_EXISTENT + existingSession.toString());
             }
             
+            if (fs.getFeedbackQuestions().contains(question)) {
+                String error = String.format(ERROR_CREATE_ENTITY_ALREADY_EXISTS,
+                        question.getEntityTypeAsString()) + question.getIdentificationString();
+                log.info(error);
+                throw new EntityAlreadyExistsException(error, question);
+            }
+            
             fs.getFeedbackQuestions().add(question.toEntity());
             
             getPm().currentTransaction().commit();
@@ -304,6 +311,15 @@ public class FeedbackSessionsDb extends EntitiesDb {
                 txn.rollback();
             }
         }
+    }
+    
+    public void addQuestionToSessionWithoutExistenceCheck(
+            FeedbackSessionAttributes existingSession, FeedbackQuestionAttributes question) 
+        throws EntityDoesNotExistException {
+
+        FeedbackSession fs = (FeedbackSession) getEntity(existingSession);
+        
+        fs.getFeedbackQuestions().add(question.toEntity());
     }
 
     public void addInstructorRespondant(String email, FeedbackSessionAttributes feedbackSession)
