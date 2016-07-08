@@ -134,7 +134,7 @@ public class FeedbackSessionsDb extends EntitiesDb {
         
         FeedbackSession fs = getFeedbackSessionEntity(feedbackSessionName, courseId);
         
-        if (fs == null) {
+        if (fs == null || JDOHelper.isDeleted(fs)) {
             log.info("Trying to get non-existent Session: " + feedbackSessionName + "/" + courseId);
             return null;
         }
