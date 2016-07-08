@@ -21,7 +21,7 @@ import teammates.storage.entity.FeedbackSession;
 import com.google.appengine.api.datastore.Text;
 
 public class FeedbackSessionAttributes extends EntityAttributes implements SessionAttributes {
-    private String feedbackSessionId;
+    private transient String feedbackSessionId;
     
     private String feedbackSessionName;
     private String courseId;
