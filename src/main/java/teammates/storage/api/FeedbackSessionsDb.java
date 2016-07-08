@@ -24,6 +24,7 @@ import teammates.common.datatransfer.EntityAttributes;
 import teammates.common.datatransfer.FeedbackQuestionAttributes;
 import teammates.common.datatransfer.FeedbackSessionAttributes;
 import teammates.common.datatransfer.FeedbackSessionType;
+import teammates.common.exception.EntityAlreadyExistsException;
 import teammates.common.exception.EntityDoesNotExistException;
 import teammates.common.exception.InvalidParametersException;
 import teammates.common.util.Assumption;
@@ -280,7 +281,8 @@ public class FeedbackSessionsDb extends EntitiesDb {
         getPm().close();
     }
     
-    public void addQuestionToSession(FeedbackSessionAttributes existingSession, FeedbackQuestionAttributes question) 
+    public void addQuestionToSession(
+                FeedbackSessionAttributes existingSession, FeedbackQuestionAttributes question) 
             throws EntityDoesNotExistException {
         
         Transaction txn = getPm().currentTransaction();

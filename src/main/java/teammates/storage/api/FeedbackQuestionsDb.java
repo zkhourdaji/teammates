@@ -40,7 +40,7 @@ public class FeedbackQuestionsDb extends EntitiesDb {
     public Object createEntity(EntityAttributes entityToAdd)
             throws InvalidParametersException, EntityAlreadyExistsException {
         Assumption.fail(
-                "Use addQuestionToSession(FeedbackSessionAttributes, FeedbackQuestionAttributes)");
+                "Use createFeedbackQuestions(FeedbackSessionAttributes, FeedbackQuestionAttributes)");
         return null;
     }
     
@@ -97,10 +97,8 @@ public class FeedbackQuestionsDb extends EntitiesDb {
         return new FeedbackQuestionAttributes(fq);
     }
 
-    public void createFeedbackQuestion(
-            FeedbackSessionAttributes fsa, 
-            FeedbackQuestionAttributes question) 
-                    throws InvalidParametersException, EntityDoesNotExistException {
+    public void createFeedbackQuestion(FeedbackSessionAttributes fsa, FeedbackQuestionAttributes question) 
+            throws InvalidParametersException, EntityDoesNotExistException {
         
         new FeedbackSessionsDb().addQuestionToSession(fsa, question);
     }

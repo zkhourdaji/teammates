@@ -1,23 +1,28 @@
 package teammates.test.cases.storage;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.appengine.api.datastore.Text;
+
 import teammates.common.datatransfer.FeedbackParticipantType;
 import teammates.common.datatransfer.FeedbackQuestionAttributes;
 import teammates.common.datatransfer.FeedbackQuestionDetails;
 import teammates.common.datatransfer.FeedbackQuestionType;
 import teammates.common.datatransfer.FeedbackSessionAttributes;
+import teammates.common.datatransfer.FeedbackSessionType;
 import teammates.common.datatransfer.FeedbackTextQuestionDetails;
 import teammates.common.exception.EntityAlreadyExistsException;
 import teammates.common.exception.EntityDoesNotExistException;
 import teammates.common.exception.InvalidParametersException;
 import teammates.common.util.Const;
 import teammates.storage.api.FeedbackQuestionsDb;
+import teammates.storage.api.FeedbackSessionsDb;
 import teammates.test.cases.BaseComponentTestCase;
 import teammates.test.driver.AssertHelper;
 
@@ -25,8 +30,12 @@ public class FeedbackQuestionsDbTest extends BaseComponentTestCase {
     private static final FeedbackQuestionsDb fqDb = new FeedbackQuestionsDb();
 
     @BeforeClass
-    public static void classSetUp() {
+    public static void classSetUp() throws InvalidParametersException, EntityAlreadyExistsException {
         printTestClassHeader();
+        
+        // make session
+        FeedbackSessionAttributes fsa = getFeedbackSessionAttributes();
+        new FeedbackSessionsDb().createEntity(fsa);
     }
     
     @Test
@@ -36,7 +45,7 @@ public class FeedbackQuestionsDbTest extends BaseComponentTestCase {
         ______TS("success : created");
 
         FeedbackQuestionAttributes fq = getNewFeedbackQuestionAttributes();
-        FeedbackSessionAttributes fsa = getNewFeedbackSessionAttributes(); 
+        FeedbackSessionAttributes fsa = getFeedbackSessionAttributes();
         // remove possibly conflicting entity from the database
         fqDb.deleteEntity(fq);
         
@@ -79,22 +88,24 @@ public class FeedbackQuestionsDbTest extends BaseComponentTestCase {
     }
       
     @Test
-    public void testCreateDeleteFeedbackQuestion() throws InvalidParametersException, EntityAlreadyExistsException {
+    public void testCreateDeleteFeedbackQuestion()
+            throws InvalidParametersException, EntityAlreadyExistsException, EntityDoesNotExistException {
 
         ______TS("standard success case");
 
+        FeedbackSessionAttributes fsa = getFeedbackSessionAttributes(); 
         FeedbackQuestionAttributes fqa = getNewFeedbackQuestionAttributes();
         
         // remove possibly conflicting entity from the database
         fqDb.deleteEntity(fqa);
         
-        fqDb.createEntity(fqa);
+        fqDb.createFeedbackQuestion(fsa, fqa);
         verifyPresentInDatastore(fqa, true);
 
         ______TS("duplicate - with same id.");
 
         try {
-            fqDb.createEntity(fqa);
+            fqDb.createFeedbackQuestion(fsa, fqa);
             signalFailureToDetectException();
         } catch (EntityAlreadyExistsException e) {
             AssertHelper.assertContains(String.format(FeedbackQuestionsDb.ERROR_CREATE_ENTITY_ALREADY_EXISTS,
@@ -129,12 +140,13 @@ public class FeedbackQuestionsDbTest extends BaseComponentTestCase {
 
     @Test
     public void testGetFeedbackQuestions() throws Exception {
+        FeedbackSessionAttributes fsa = getFeedbackSessionAttributes();
         FeedbackQuestionAttributes expected = getNewFeedbackQuestionAttributes();
         
         // remove possibly conflicting entity from the database
         fqDb.deleteEntity(expected);
         
-        fqDb.createEntity(expected);
+        fqDb.createFeedbackQuestion(fsa,expected);
 
         ______TS("standard success case");
 
@@ -303,9 +315,10 @@ public class FeedbackQuestionsDbTest extends BaseComponentTestCase {
 
         ______TS("invalid feedback question attributes");
 
+        FeedbackSessionAttributes fsa = getFeedbackSessionAttributes();
         FeedbackQuestionAttributes invalidFqa = getNewFeedbackQuestionAttributes();
         fqDb.deleteEntity(invalidFqa);
-        fqDb.createEntity(invalidFqa);
+        fqDb.createFeedbackQuestion(fsa, invalidFqa);
         invalidFqa.setId(fqDb.getFeedbackQuestion(invalidFqa.feedbackSessionName, invalidFqa.courseId,
                                                   invalidFqa.questionNumber).getId());
         invalidFqa.creatorEmail = "haha";
@@ -353,12 +366,23 @@ public class FeedbackQuestionsDbTest extends BaseComponentTestCase {
         fqDb.deleteEntity(modifiedQuestion);
     }
 
-    private FeedbackSessionAttributes getNewFeedbackSessionAttributes() {
+    private static FeedbackSessionAttributes getFeedbackSessionAttributes() {
         FeedbackSessionAttributes fsa = new FeedbackSessionAttributes();
 
         fsa.setCourseId("testCourse");
         fsa.setCreatorEmail("instructor@email.com");
         fsa.setFeedbackSessionName("testFeedbackSession");
+        
+        fsa.setFeedbackSessionType(FeedbackSessionType.STANDARD);
+        fsa.setCreatedTime(new Date());
+        fsa.setStartTime(new Date());
+        fsa.setEndTime(new Date());
+        fsa.setSessionVisibleFromTime(new Date());
+        fsa.setResultsVisibleFromTime(new Date());
+        fsa.setGracePeriod(5);
+        fsa.setSentOpenEmail(true);
+        fsa.setSentPublishedEmail(true);
+        fsa.setInstructions(new Text("Give feedback."));
         
         return fsa;
     }
@@ -389,6 +413,8 @@ public class FeedbackQuestionsDbTest extends BaseComponentTestCase {
         FeedbackQuestionAttributes fqa;
         List<FeedbackQuestionAttributes> returnVal = new ArrayList<FeedbackQuestionAttributes>();
 
+        FeedbackSessionAttributes fsa = getFeedbackSessionAttributes();
+        
         for (int i = 1; i <= num; i++) {
             fqa = getNewFeedbackQuestionAttributes();
             fqa.questionNumber = i;
@@ -396,7 +422,7 @@ public class FeedbackQuestionsDbTest extends BaseComponentTestCase {
             // remove possibly conflicting entity from the database
             fqDb.deleteEntity(fqa);
             
-            fqDb.createEntity(fqa);
+            fqDb.createFeedbackQuestion(fsa, fqa);
             returnVal.add(fqa);
         }
 
@@ -412,13 +438,14 @@ public class FeedbackQuestionsDbTest extends BaseComponentTestCase {
                 2
         };
 
+        FeedbackSessionAttributes fsa = getFeedbackSessionAttributes();
         FeedbackQuestionAttributes fqa;
 
         for (int i = 1; i <= numberOfQuestionsToCreate[0]; i++) {
             fqa = getNewFeedbackQuestionAttributes();
             fqa.questionNumber = i;
             fqa.giverType = FeedbackParticipantType.INSTRUCTORS;
-            fqDb.createEntity(fqa);
+            fqDb.createFeedbackQuestion(fsa, fqa);
         }
 
         for (int i = 1; i <= numberOfQuestionsToCreate[1]; i++) {
