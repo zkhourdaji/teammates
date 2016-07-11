@@ -152,6 +152,7 @@ public class FeedbackSessionsLogic {
             question.courseId = newCourseId;
             question.feedbackSessionName = newFeedbackSessionName;
             question.creatorEmail = instructorEmail;
+            question.setId(question.makeId());
             fqLogic.createFeedbackQuestionNoIntegrityCheck(copiedFeedbackSession, 
                                                            question, question.questionNumber);
         }
