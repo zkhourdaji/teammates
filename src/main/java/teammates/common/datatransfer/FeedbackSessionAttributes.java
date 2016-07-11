@@ -126,6 +126,10 @@ public class FeedbackSessionAttributes extends EntityAttributes implements Sessi
         this.respondingStudentList = studentList;
     }
     
+    public FeedbackSessionAttributes(FeedbackSessionAttributes expected) {
+        this(expected.toEntity());
+    }
+
     public static String makeId(String feedbackSessionName, String courseId) {
         return feedbackSessionName + "%" + courseId;
     }
