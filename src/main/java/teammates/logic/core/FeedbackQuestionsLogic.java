@@ -26,6 +26,8 @@ import teammates.common.util.Assumption;
 import teammates.common.util.Const;
 import teammates.common.util.Utils;
 import teammates.storage.api.FeedbackQuestionsDb;
+import teammates.storage.entity.FeedbackSession;
+import teammates.storage.entity.Question;
 
 public class FeedbackQuestionsLogic {
     
@@ -59,11 +61,18 @@ public class FeedbackQuestionsLogic {
         } catch (EntityDoesNotExistException e) {
             Assumption.fail("Session disappeared.");
         }
+        
         if (fqa.questionNumber < 0) {
             fqa.questionNumber = questions.size() + 1;
         }
-        adjustQuestionNumbers(fsa, questions.size() + 1, fqa.questionNumber, questions);
-        createFeedbackQuestionNoIntegrityCheck(fsa, fqa, fqa.questionNumber);
+        int questionNumber = fqa.questionNumber;
+        // ignore question number set by user
+        // id of a new question is always based on the largest question number
+        fqa.questionNumber = questions.size() + 1;
+        fqa.setId(fqa.makeId());
+        
+        adjustQuestionNumbers(fsa, questions.size() + 1, questionNumber, questions);
+        createFeedbackQuestionNoIntegrityCheck(fsa, fqa, questionNumber);
     }
     
     /**
@@ -550,9 +559,9 @@ public class FeedbackQuestionsLogic {
                 try {
                     updateFeedbackQuestionWithoutResponseRateUpdate(fs, question);
                 } catch (InvalidParametersException e) {
-                    Assumption.fail("Invalid question.");
+                    Assumption.fail("Invalid question. " + e);
                 } catch (EntityDoesNotExistException e) {
-                    Assumption.fail("Question disappeared.");
+                    Assumption.fail("Question disappeared." + e);
                 }
             }
         } else if (oldQuestionNumber < newQuestionNumber && oldQuestionNumber < questions.size()) {
@@ -562,9 +571,9 @@ public class FeedbackQuestionsLogic {
                 try {
                     updateFeedbackQuestionWithoutResponseRateUpdate(fs, question);
                 } catch (InvalidParametersException e) {
-                    Assumption.fail("Invalid question.");
+                    Assumption.fail("Invalid question." + e);
                 } catch (EntityDoesNotExistException e) {
-                    Assumption.fail("Question disappeared.");
+                    Assumption.fail("Question disappeared." + e);
                 }
             }
         }
@@ -598,12 +607,11 @@ public class FeedbackQuestionsLogic {
      */
     public void updateFeedbackQuestion(FeedbackSessionAttributes fs, FeedbackQuestionAttributes newAttributes)
             throws InvalidParametersException, EntityDoesNotExistException {
-
         updateFeedbackQuestion(fs, newAttributes, true);
     }
 
     private void updateFeedbackQuestion(FeedbackSessionAttributes fs, 
-            FeedbackQuestionAttributes newAttributes, boolean hasResponseRateUpdate)
+                FeedbackQuestionAttributes newAttributes, boolean hasResponseRateUpdate)
             throws InvalidParametersException, EntityDoesNotExistException {
         FeedbackQuestionAttributes oldQuestion = null;
         if (newAttributes.getId() == null) {
@@ -618,11 +626,11 @@ public class FeedbackQuestionsLogic {
                     "Trying to update a feedback question that does not exist.");
         }
         
+        oldQuestion.updateValues(newAttributes);
         if (oldQuestion.isChangesRequiresResponseDeletion(newAttributes)) {
             frLogic.deleteFeedbackResponsesForQuestionAndCascade(fs, oldQuestion.getId(), hasResponseRateUpdate);
         }
         
-        oldQuestion.updateValues(newAttributes);
         newAttributes.removeIrrelevantVisibilityOptions();
         fqDb.updateFeedbackQuestion(newAttributes);
     }

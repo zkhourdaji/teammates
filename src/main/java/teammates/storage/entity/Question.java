@@ -83,22 +83,6 @@ public class Question implements StoreCallback {
     private Date updatedAt;
     
     public Question(
-            String feedbackSessionName, String courseId, String creatorEmail,
-            Text questionText, int questionNumber, FeedbackQuestionType questionType,
-            FeedbackParticipantType giverType,
-            FeedbackParticipantType recipientType,
-            int numberOfEntitiesToGiveFeedbackTo,
-            List<FeedbackParticipantType> showResponsesTo,
-            List<FeedbackParticipantType> showGiverNameTo,
-            List<FeedbackParticipantType> showRecipientNameTo) {
-        
-        this(null, // allows database to set id on its own
-                feedbackSessionName, courseId, creatorEmail, questionText, questionNumber,
-                questionType, giverType, recipientType, numberOfEntitiesToGiveFeedbackTo,
-                showResponsesTo, showGiverNameTo, showRecipientNameTo);
-    }
-    
-    public Question(
             String questionId,
             String feedbackSessionName, String courseId, String creatorEmail,
             Text questionText, int questionNumber, FeedbackQuestionType questionType,
@@ -143,6 +127,28 @@ public class Question implements StoreCallback {
         this.showRecipientNameTo = oldQuestion.getShowRecipientNameTo();
         this.setCreatedAt(oldQuestion.getCreatedAt());
         this.setLastUpdate(oldQuestion.getUpdatedAt());
+    }
+    
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        
+        if (other == null) {
+            return false;
+        }
+        if (!(other instanceof Question)) {
+            return false;
+        }
+        
+        final Question question = (Question) other;
+        return feedbackQuestionId.equals(question.feedbackQuestionId);
+    }
+    
+    @Override
+    public int hashCode() {
+        return feedbackQuestionId.hashCode();
     }
 
     public Date getCreatedAt() {
