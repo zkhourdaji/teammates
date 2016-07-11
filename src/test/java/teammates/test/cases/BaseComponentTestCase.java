@@ -114,6 +114,7 @@ public class BaseComponentTestCase extends BaseTestCase {
     protected static void verifyPresentInDatastore(FeedbackQuestionAttributes expected, boolean wildcardId) {
         FeedbackQuestionAttributes actual = fqDb.getFeedbackQuestion(expected.feedbackSessionName,
                                                                      expected.courseId, expected.questionNumber);
+        expected = new FeedbackQuestionAttributes(expected);
         if (wildcardId) {
             expected.setId(actual.getId());
         }
