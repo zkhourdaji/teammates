@@ -95,7 +95,7 @@ public class FeedbackQuestionAttributes extends EntityAttributes implements Comp
     }
     
     private String formatTimeForId(Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSS");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
         return sdf.format(date.getTime());
     }
 
