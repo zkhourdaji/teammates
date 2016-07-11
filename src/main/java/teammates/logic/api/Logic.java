@@ -1681,10 +1681,11 @@ public class Logic {
      * Preconditions: <br>
      * * All parameters are non-null.
      * @throws EntityDoesNotExistException 
+     * @throws EntityAlreadyExistsException 
      */
     public void createFeedbackQuestion(
             FeedbackSessionAttributes session, FeedbackQuestionAttributes feedbackQuestion)
-                    throws InvalidParametersException, EntityDoesNotExistException {
+                    throws InvalidParametersException, EntityDoesNotExistException, EntityAlreadyExistsException {
         Assumption.assertNotNull(ERROR_NULL_PARAMETER, session);
         Assumption.assertNotNull(ERROR_NULL_PARAMETER, feedbackQuestion);
         feedbackQuestionsLogic.createFeedbackQuestion(session, feedbackQuestion);
@@ -1698,11 +1699,12 @@ public class Logic {
      * * All parameters are non-null.
      * * questionNumber is > 0
      * @throws EntityDoesNotExistException 
+     * @throws EntityAlreadyExistsException 
      */
     public void createFeedbackQuestionForTemplate(
             FeedbackSessionAttributes feedbackSession,
             FeedbackQuestionAttributes feedbackQuestion, int questionNumber)
-            throws InvalidParametersException, EntityDoesNotExistException {
+            throws InvalidParametersException, EntityDoesNotExistException, EntityAlreadyExistsException {
 
         Assumption.assertNotNull(ERROR_NULL_PARAMETER, feedbackQuestion);
         Assumption.assertTrue(questionNumber > 0);
@@ -1714,14 +1716,13 @@ public class Logic {
      * Preconditions: <br>
      * * All parameters are non-null.
      * @throws EntityDoesNotExistException 
+     * @throws EntityAlreadyExistsException 
      */
     public FeedbackQuestionAttributes copyFeedbackQuestion(
-            String oldCourseId,
-            String oldFeedbackSession,
-            String feedbackQuestionId,
-                FeedbackSessionAttributes fsa, 
+                String oldCourseId, String oldFeedbackSession,
+                String feedbackQuestionId, FeedbackSessionAttributes fsa, 
                 String instructorEmail)
-            throws InvalidParametersException, EntityDoesNotExistException {
+            throws InvalidParametersException, EntityDoesNotExistException, EntityAlreadyExistsException {
         
         Assumption.assertNotNull(ERROR_NULL_PARAMETER, oldCourseId);
         Assumption.assertNotNull(ERROR_NULL_PARAMETER, oldFeedbackSession);

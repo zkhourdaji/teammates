@@ -119,7 +119,8 @@ public class InstructorFeedbackAddAction extends InstructorFeedbacksPageAction {
     private void createTemplateFeedbackQuestions(
             FeedbackSessionAttributes feedbackSession,
             String courseId, String feedbackSessionName,
-            String creatorEmail, String feedbackSessionType) throws InvalidParametersException, EntityDoesNotExistException {
+            String creatorEmail, String feedbackSessionType) 
+                    throws InvalidParametersException, EntityDoesNotExistException, EntityAlreadyExistsException {
         if (feedbackSessionType == null) {
             return;
         }

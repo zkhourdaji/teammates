@@ -50,7 +50,7 @@ public class FeedbackQuestionsLogic {
     }
     
     public void createFeedbackQuestion(FeedbackSessionAttributes fsa, FeedbackQuestionAttributes fqa)
-            throws InvalidParametersException, EntityDoesNotExistException {
+            throws InvalidParametersException, EntityDoesNotExistException, EntityAlreadyExistsException {
         
         String feedbackSessionName = fqa.feedbackSessionName;
         String courseId = fqa.courseId;
@@ -87,13 +87,14 @@ public class FeedbackQuestionsLogic {
      * @param questionNumber
      * @throws InvalidParametersException
      * @throws EntityDoesNotExistException 
+     * @throws EntityAlreadyExistsException 
      */
     public void createFeedbackQuestionNoIntegrityCheck(
             FeedbackSessionAttributes fsa, 
-            FeedbackQuestionAttributes fqa, int questionNumber) throws InvalidParametersException, EntityDoesNotExistException {
+            FeedbackQuestionAttributes fqa, int questionNumber) throws InvalidParametersException, EntityDoesNotExistException, EntityAlreadyExistsException {
         fqa.questionNumber = questionNumber;
         fqa.removeIrrelevantVisibilityOptions();
-        fqDb.createFeedbackQuestionWithoutExistenceCheck(fsa, fqa);
+        fqDb.createFeedbackQuestion(fsa, fqa);
     }
     
     public FeedbackQuestionAttributes copyFeedbackQuestion(
@@ -102,7 +103,7 @@ public class FeedbackQuestionsLogic {
             String feedbackQuestionId,
             FeedbackSessionAttributes newSession,
             String instructorEmail)
-            throws InvalidParametersException, EntityDoesNotExistException {
+            throws InvalidParametersException, EntityDoesNotExistException, EntityAlreadyExistsException {
 
         FeedbackQuestionAttributes question = getFeedbackQuestion(
                 oldFeedbackSession, oldCourseId, feedbackQuestionId);
@@ -475,8 +476,11 @@ public class FeedbackQuestionsLogic {
         if (numberOfResponsesNeeded == Const.MAX_POSSIBLE_RECIPIENTS) {
             numberOfResponsesNeeded = getRecipientsForQuestion(question, email).size();
         }
+        System.out.println("isQuestionFullyAnsweredByUser");
+        System.out.println(numberOfResponsesGiven);
+        System.out.println(numberOfResponsesNeeded);
         
-        return numberOfResponsesGiven >= numberOfResponsesNeeded ? true : false;
+        return numberOfResponsesGiven >= numberOfResponsesNeeded;
     }
 
     /**

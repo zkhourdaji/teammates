@@ -328,8 +328,12 @@ public class FeedbackSessionsDb extends EntitiesDb {
     
     public void addQuestionToSessionWithoutExistenceCheck(
             FeedbackSessionAttributes existingSession, FeedbackQuestionAttributes question) 
-        throws EntityDoesNotExistException {
+        throws EntityDoesNotExistException, InvalidParametersException {
 
+        if (!question.isValid()) {
+            throw new InvalidParametersException(question.getInvalidityInfo());
+        }
+        
         FeedbackSession fs = (FeedbackSession) getEntity(existingSession);
         fs.getFeedbackQuestions().add(question.toEntity());
         
