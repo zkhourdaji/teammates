@@ -104,6 +104,8 @@ public class FeedbackQuestionsDbTest extends BaseComponentTestCase {
 
         ______TS("duplicate - with same id.");
 
+        // retrieve from database to get id
+        fqa = fqDb.getFeedbackQuestion(fsa.getFeedbackSessionName(), fsa.getCourseId(), fqa.questionNumber);
         try {
             fqDb.createFeedbackQuestion(fsa, fqa);
             signalFailureToDetectException();
@@ -121,7 +123,14 @@ public class FeedbackQuestionsDbTest extends BaseComponentTestCase {
         ______TS("null params");
 
         try {
-            fqDb.createEntity(null);
+            fqDb.createFeedbackQuestion(fsa, null);
+            signalFailureToDetectException();
+        } catch (AssertionError e) {
+            AssertHelper.assertContains(Const.StatusCodes.DBLEVEL_NULL_INPUT, e.getLocalizedMessage());
+        }
+        
+        try {
+            fqDb.createFeedbackQuestion(null, fqa);
             signalFailureToDetectException();
         } catch (AssertionError e) {
             AssertHelper.assertContains(Const.StatusCodes.DBLEVEL_NULL_INPUT, e.getLocalizedMessage());
@@ -131,7 +140,7 @@ public class FeedbackQuestionsDbTest extends BaseComponentTestCase {
 
         try {
             fqa.creatorEmail = "haha";
-            fqDb.createEntity(fqa);
+            fqDb.createFeedbackQuestion(fsa, fqa);
             signalFailureToDetectException();
         } catch (InvalidParametersException e) {
             AssertHelper.assertContains("Invalid creator's email", e.getLocalizedMessage());
@@ -346,7 +355,7 @@ public class FeedbackQuestionsDbTest extends BaseComponentTestCase {
 
         FeedbackQuestionAttributes modifiedQuestion = getNewFeedbackQuestionAttributes();
         fqDb.deleteEntity(modifiedQuestion);
-        fqDb.createEntity(modifiedQuestion);
+        fqDb.createFeedbackQuestion(fsa, modifiedQuestion);
         verifyPresentInDatastore(modifiedQuestion, true);
 
         modifiedQuestion = fqDb.getFeedbackQuestion(modifiedQuestion.feedbackSessionName,
@@ -452,14 +461,14 @@ public class FeedbackQuestionsDbTest extends BaseComponentTestCase {
             fqa = getNewFeedbackQuestionAttributes();
             fqa.questionNumber = numberOfQuestionsToCreate[0] + i;
             fqa.giverType = FeedbackParticipantType.STUDENTS;
-            fqDb.createEntity(fqa);
+            fqDb.createFeedbackQuestion(fsa, fqa);
         }
 
         for (int i = 1; i <= numberOfQuestionsToCreate[2]; i++) {
             fqa = getNewFeedbackQuestionAttributes();
             fqa.giverType = FeedbackParticipantType.SELF;
             fqa.questionNumber = numberOfQuestionsToCreate[0] + numberOfQuestionsToCreate[1] + i;
-            fqDb.createEntity(fqa);
+            fqDb.createFeedbackQuestion(fsa, fqa);
         }
 
         for (int i = 1; i <= numberOfQuestionsToCreate[3]; i++) {
@@ -467,7 +476,7 @@ public class FeedbackQuestionsDbTest extends BaseComponentTestCase {
             fqa.giverType = FeedbackParticipantType.TEAMS;
             fqa.questionNumber = numberOfQuestionsToCreate[0] + numberOfQuestionsToCreate[1]
                                  + numberOfQuestionsToCreate[2] + i;
-            fqDb.createEntity(fqa);
+            fqDb.createFeedbackQuestion(fsa, fqa);
         }
 
         return numberOfQuestionsToCreate;

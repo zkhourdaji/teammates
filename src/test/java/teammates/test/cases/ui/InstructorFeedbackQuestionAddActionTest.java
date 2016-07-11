@@ -843,11 +843,11 @@ public class InstructorFeedbackQuestionAddActionTest extends BaseActionTest {
         action = getAction(params);
         result = (RedirectResult) action.executeAndPostProcess();
 
+        assertEquals("NONE is not a valid feedback giver.", result.getStatusMessage());
         assertEquals(Const.ActionURIs.INSTRUCTOR_FEEDBACK_EDIT_PAGE + "?courseid=" + instructor1ofCourse1.courseId
                      + "&fsname=First+feedback+session" + "&user=" + instructor1ofCourse1.googleId + "&error=true",
                      result.getDestinationWithParams());
 
-        assertEquals("NONE is not a valid feedback giver.", result.getStatusMessage());
 
         expectedLogMessage =
                 "TEAMMATESLOG|||instructorFeedbackQuestionAdd|||"
