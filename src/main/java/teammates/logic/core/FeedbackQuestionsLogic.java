@@ -67,8 +67,12 @@ public class FeedbackQuestionsLogic {
         }
         int questionNumber = fqa.questionNumber;
         // ignore question number set by user
-        // id of a new question is always based on the largest question number
-        fqa.questionNumber = questions.size() + 1;
+        // id of a new question is always based on the largest question number + 1
+        if (!questions.isEmpty()) {
+            fqa.questionNumber = questions.get(questions.size() - 1).questionNumber + 1;
+        } else {
+            fqa.questionNumber = 1;
+        }
         fqa.setId(fqa.makeId());
         
         adjustQuestionNumbers(fsa, questions.size() + 1, questionNumber, questions);
