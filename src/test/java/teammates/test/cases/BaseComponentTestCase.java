@@ -158,15 +158,16 @@ public class BaseComponentTestCase extends BaseTestCase {
     }
     
     protected static void verifyPresentInDatastore(FeedbackSessionAttributes expected) {
+        FeedbackSessionAttributes expectedCopy = new FeedbackSessionAttributes(expected);
         FeedbackSessionAttributes actual =
                 fsDb.getFeedbackSession(expected.getCourseId(), expected.getFeedbackSessionName());
-        expected.setRespondingInstructorList(actual.getRespondingInstructorList());
-        expected.setRespondingStudentList(actual.getRespondingStudentList());
+        expectedCopy.setRespondingInstructorList(actual.getRespondingInstructorList());
+        expectedCopy.setRespondingStudentList(actual.getRespondingStudentList());
         
         // TODO remove setting questions to empty and assert questions are correct
         actual.setQuestions(Collections.<FeedbackQuestionAttributes> emptyList());
-        expected.setQuestions(Collections.<FeedbackQuestionAttributes> emptyList());
-        assertEquals(gson.toJson(expected), gson.toJson(actual));
+        expectedCopy.setQuestions(Collections.<FeedbackQuestionAttributes> emptyList());
+        assertEquals(gson.toJson(expectedCopy), gson.toJson(actual));
     }
 
     protected static void verifyAbsentInDatastore(InstructorAttributes instructor) {
