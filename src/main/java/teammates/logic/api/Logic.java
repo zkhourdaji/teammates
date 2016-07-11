@@ -1784,8 +1784,9 @@ public class Logic {
      * silently if there is no such feedback question. <br>
      * Preconditions: <br>
      * * All parameters are non-null.
+     * @throws EntityDoesNotExistException 
      */
-    public void deleteFeedbackQuestion(FeedbackSessionAttributes fsa, String questionId) {
+    public void deleteFeedbackQuestion(FeedbackSessionAttributes fsa, String questionId) throws EntityDoesNotExistException {
         Assumption.assertNotNull(ERROR_NULL_PARAMETER, questionId);
         feedbackQuestionsLogic.deleteFeedbackQuestionCascade(fsa, questionId);
     }

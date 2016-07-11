@@ -75,6 +75,7 @@ public class FeedbackQuestionsDb extends EntitiesDb {
             if (txn.isActive()) {
                 txn.rollback();
             }
+            getPm().close();
         }
     }
     
@@ -272,6 +273,30 @@ public class FeedbackQuestionsDb extends EntitiesDb {
         getPm().close();
     }
     
+    public void deleteQuestion(FeedbackSessionAttributes fsa, FeedbackQuestionAttributes questionToDelete) 
+            throws EntityDoesNotExistException {
+        Transaction txn = getPm().currentTransaction();
+        try {
+            txn.begin();
+            FeedbackSession fs = new FeedbackSessionsDb().getEntity(fsa);
+            
+            if (fs == null) {
+                throw new EntityDoesNotExistException(
+                        ERROR_UPDATE_NON_EXISTENT + fsa.toString());
+            }
+            
+            fs.getFeedbackQuestions().remove(questionToDelete);
+            deleteEntity(questionToDelete);
+            
+            getPm().currentTransaction().commit();
+        } finally {
+            if (txn.isActive()) {
+                txn.rollback();
+            }
+            getPm().close();
+        }
+    }
+    
     public void deleteFeedbackQuestionsForCourse(String courseId) {
         Assumption.assertNotNull(Const.StatusCodes.DBLEVEL_NULL_INPUT, courseId);
         
@@ -280,6 +305,7 @@ public class FeedbackQuestionsDb extends EntitiesDb {
         deleteFeedbackQuestionsForCourses(courseIds);
     }
     
+
     public void deleteFeedbackQuestionsForCourses(List<String> courseIds) {
         Assumption.assertNotNull(Const.StatusCodes.DBLEVEL_NULL_INPUT, courseIds);
         

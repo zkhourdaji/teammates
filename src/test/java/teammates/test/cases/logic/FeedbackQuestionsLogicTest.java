@@ -272,10 +272,8 @@ public class FeedbackQuestionsLogicTest extends BaseComponentTestCase {
         newQuestion.questionNumber = 1;
         fqLogic.createFeedbackQuestion(session, newQuestion);
         
-        System.out.println(newQuestion);
         actualList = fqLogic.getFeedbackQuestionsForSession(q1.feedbackSessionName, q1.courseId);
-        System.out.println(expectedList);
-        System.out.println(actualList);
+        
         assertEquals(expectedList.size(), actualList.size());
         for (int i = 0; i < actualList.size(); i++) {
             assertEquals(actualList.get(i), expectedList.get(i));
@@ -414,7 +412,7 @@ public class FeedbackQuestionsLogicTest extends BaseComponentTestCase {
         }
     }
 
-    public void testDeleteQuestion() {
+    public void testDeleteQuestion() throws Exception {
         //Success case already tested in update
         ______TS("question already does not exist, silently fail");
         FeedbackSessionAttributes fsa = getSessionFromDatastore("session1InCourse1");

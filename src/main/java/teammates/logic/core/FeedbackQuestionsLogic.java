@@ -468,6 +468,7 @@ public class FeedbackQuestionsLogic {
     public boolean isQuestionFullyAnsweredByUser(FeedbackQuestionAttributes question, String email)
             throws EntityDoesNotExistException {
         
+      
         int numberOfResponsesGiven =
                 frLogic.getFeedbackResponsesFromGiverForQuestion(question.getId(), email).size();
         int numberOfResponsesNeeded =
@@ -476,9 +477,6 @@ public class FeedbackQuestionsLogic {
         if (numberOfResponsesNeeded == Const.MAX_POSSIBLE_RECIPIENTS) {
             numberOfResponsesNeeded = getRecipientsForQuestion(question, email).size();
         }
-        System.out.println("isQuestionFullyAnsweredByUser");
-        System.out.println(numberOfResponsesGiven);
-        System.out.println(numberOfResponsesNeeded);
         
         return numberOfResponsesGiven >= numberOfResponsesNeeded;
     }
@@ -647,7 +645,6 @@ public class FeedbackQuestionsLogic {
             throws EntityDoesNotExistException {
         List<FeedbackQuestionAttributes> questions =
                 getFeedbackQuestionsForSession(fs.getFeedbackSessionName(), fs.getCourseId());
-        
         for (FeedbackQuestionAttributes question : questions) {
             deleteFeedbackQuestionCascadeWithoutResponseRateUpdate( fs, question.getId());
         }
@@ -663,9 +660,10 @@ public class FeedbackQuestionsLogic {
      * Silently fails if question does not exist.
      * 
      * @param feedbackQuestionId
+     * @throws EntityDoesNotExistException 
      */
     private void deleteFeedbackQuestionCascadeWithoutResponseRateUpdate(FeedbackSessionAttributes fs, 
-            String feedbackQuestionId) {
+            String feedbackQuestionId) throws EntityDoesNotExistException {
         FeedbackQuestionAttributes questionToDeleteById =
                         getFeedbackQuestion(fs, feedbackQuestionId);
         
@@ -687,8 +685,9 @@ public class FeedbackQuestionsLogic {
      * Silently fail if question does not exist.
      * 
      * @param feedbackQuestionId
+     * @throws EntityDoesNotExistException 
      */
-    public void deleteFeedbackQuestionCascade(FeedbackSessionAttributes fs, String feedbackQuestionId) {
+    public void deleteFeedbackQuestionCascade(FeedbackSessionAttributes fs, String feedbackQuestionId) throws EntityDoesNotExistException {
         FeedbackQuestionAttributes questionToDeleteById =
                         getFeedbackQuestion(fs, feedbackQuestionId);
         
@@ -717,10 +716,11 @@ public class FeedbackQuestionsLogic {
      * Can be used when the question ID is unknown. <br>
      * Cascade the deletion of all existing responses for the question and then
      * shifts larger question numbers down by one to preserve number order.
+     * @throws EntityDoesNotExistException 
      */
     private void deleteFeedbackQuestionCascade(
             FeedbackSessionAttributes fs,
-            String feedbackSessionName, String courseId, int questionNumber, boolean hasResponseRateUpdate) {
+            String feedbackSessionName, String courseId, int questionNumber, boolean hasResponseRateUpdate) throws EntityDoesNotExistException {
         
         FeedbackQuestionAttributes questionToDelete =
                 getFeedbackQuestion(feedbackSessionName, courseId, questionNumber);
@@ -738,7 +738,7 @@ public class FeedbackQuestionsLogic {
             Assumption.fail("Session disappeared.");
         }
         
-        fqDb.deleteEntity(questionToDelete);
+        fqDb.deleteQuestion(fs, questionToDelete);
         
         if (questionToDelete.questionNumber < questionsToShiftQnNumber.size()) {
             shiftQuestionNumbersDown(fs, questionToDelete.questionNumber, questionsToShiftQnNumber);

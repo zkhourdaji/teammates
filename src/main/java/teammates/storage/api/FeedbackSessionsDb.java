@@ -39,11 +39,6 @@ public class FeedbackSessionsDb extends EntitiesDb {
 
     public void createFeedbackSessions(Collection<FeedbackSessionAttributes> feedbackSessionsToAdd)
             throws InvalidParametersException {
-        System.out.println("======create FeedbackSessions");
-        for (FeedbackSessionAttributes session : feedbackSessionsToAdd) {
-            System.out.println(session);
-        }
-        System.out.println("======create FeedbackSessions END===");
         List<EntityAttributes> feedbackSessionsToUpdate = createEntities(feedbackSessionsToAdd);
         for (EntityAttributes entity : feedbackSessionsToUpdate) {
             FeedbackSessionAttributes session = (FeedbackSessionAttributes) entity;

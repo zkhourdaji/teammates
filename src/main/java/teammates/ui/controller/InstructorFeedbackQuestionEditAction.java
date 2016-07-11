@@ -66,7 +66,7 @@ public class InstructorFeedbackQuestionEditAction extends Action {
                                             .getInstructorFeedbackEditLink(courseId, feedbackSessionName));
     }
 
-    private void deleteQuestion(FeedbackSessionAttributes session, FeedbackQuestionAttributes updatedQuestion) {
+    private void deleteQuestion(FeedbackSessionAttributes session, FeedbackQuestionAttributes updatedQuestion) throws EntityDoesNotExistException {
         logic.deleteFeedbackQuestion(session, updatedQuestion.getId());
         statusToUser.add(
                 new StatusMessage(Const.StatusMessages.FEEDBACK_QUESTION_DELETED, StatusMessageColor.SUCCESS));
