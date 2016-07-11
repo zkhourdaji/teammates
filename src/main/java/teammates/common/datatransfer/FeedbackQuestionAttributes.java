@@ -72,16 +72,19 @@ public class FeedbackQuestionAttributes extends EntityAttributes implements Comp
         return feedbackQuestionId;
     }
 
-    /** NOTE: Only use this to match and search for the ID of a known existing question entity. */
     public void setId(String id) {
         this.feedbackQuestionId = id;
+    }
+    
+    public String makeId() {
+        return Sanitizer.sanitizeForUri(courseId)
+               + "/" + Sanitizer.sanitizeForUri(feedbackSessionName)
+               + "/" + questionNumber;
     }
 
     @Override
     public Question toEntity() {
-        String questionId = Sanitizer.sanitizeForUri(courseId)
-                            + "/" + Sanitizer.sanitizeForUri(feedbackSessionName)
-                            + "/" + questionNumber;
+        String questionId = getId() == null ? makeId() : getId();
         return new Question(questionId,
                             feedbackSessionName, courseId, creatorEmail,
                             questionMetaData, questionNumber, questionType, giverType,
