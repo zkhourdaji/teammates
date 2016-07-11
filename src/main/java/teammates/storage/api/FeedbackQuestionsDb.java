@@ -99,12 +99,16 @@ public class FeedbackQuestionsDb extends EntitiesDb {
 
     public void createFeedbackQuestion(FeedbackSessionAttributes fsa, FeedbackQuestionAttributes question) 
             throws InvalidParametersException, EntityDoesNotExistException, EntityAlreadyExistsException {
+        Assumption.assertNotNull(Const.StatusCodes.DBLEVEL_NULL_INPUT, fsa);
+        Assumption.assertNotNull(Const.StatusCodes.DBLEVEL_NULL_INPUT, question);
         
         new FeedbackSessionsDb().addQuestionToSession(fsa, question);
     }
     
     public void createFeedbackQuestionWithoutExistenceCheck(FeedbackSessionAttributes fsa, FeedbackQuestionAttributes question) 
             throws InvalidParametersException, EntityDoesNotExistException {
+        Assumption.assertNotNull(Const.StatusCodes.DBLEVEL_NULL_INPUT, fsa);
+        Assumption.assertNotNull(Const.StatusCodes.DBLEVEL_NULL_INPUT, question);
         
         new FeedbackSessionsDb().addQuestionToSessionWithoutExistenceCheck(fsa, question);
     }
@@ -168,6 +172,11 @@ public class FeedbackQuestionsDb extends EntitiesDb {
     
     public static List<Question> getFeedbackQuestionEntitiesFromFeedbackQuestionAttributes(
             Collection<FeedbackQuestionAttributes> questions) {
+        
+        if (questions == null) {
+            return new ArrayList<Question>();
+        }
+        
         List<Question> fqList = new ArrayList<Question>();
         for (FeedbackQuestionAttributes question : questions) {
             fqList.add(question.toEntity());
@@ -290,13 +299,11 @@ public class FeedbackQuestionsDb extends EntitiesDb {
         return feedbackQuestionList;
     }
     
-    // Gets a question entity if it's Key (feedbackQuestionId) is known.
     private Question getFeedbackQuestionEntity(FeedbackSessionAttributes fsa, String feedbackQuestionId) {
         Assumption.assertNotNull(Const.StatusCodes.DBLEVEL_NULL_INPUT, feedbackQuestionId);
 
         Key k = KeyFactory.createKey(FeedbackSession.class.getSimpleName(), fsa.getId())
-                            .getChild(
-                                     Question.class.getSimpleName(), feedbackQuestionId);
+                            .getChild(Question.class.getSimpleName(), feedbackQuestionId);
         try {
             Question q = getPm().getObjectById(Question.class, k);
             return q;

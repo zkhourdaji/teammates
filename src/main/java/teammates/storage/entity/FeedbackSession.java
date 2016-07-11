@@ -3,9 +3,11 @@ package teammates.storage.entity;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.jdo.JDOHelper;
 import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.Order;
 import javax.jdo.annotations.PersistenceCapable;
@@ -115,6 +117,12 @@ public class FeedbackSession {
     public List<Question> getFeedbackQuestions() {
         if (feedbackQuestions == null) {
             feedbackQuestions = new ArrayList<>();
+        }
+        for (Iterator<Question> iter = feedbackQuestions.iterator(); iter.hasNext();) {
+            Question question = iter.next();
+            if (JDOHelper.isDeleted(question)) {
+                iter.remove();
+            }
         }
         return feedbackQuestions;
     }
