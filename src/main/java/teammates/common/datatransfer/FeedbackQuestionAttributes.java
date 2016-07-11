@@ -1,9 +1,12 @@
 package teammates.common.datatransfer;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
+import teammates.common.util.Assumption;
 import teammates.common.util.Const;
 import teammates.common.util.FieldValidator;
 import teammates.common.util.Sanitizer;
@@ -59,6 +62,11 @@ public class FeedbackQuestionAttributes extends EntityAttributes implements Comp
      
         removeIrrelevantVisibilityOptions();
     }
+    
+    // copy constructor
+    public FeedbackQuestionAttributes(FeedbackQuestionAttributes fqa) {
+        this(fqa.toEntity());
+    }
 
     public Date getCreatedAt() {
         return (createdAt == null) ? Const.TIME_REPRESENTS_DEFAULT_TIMESTAMP : createdAt;
@@ -73,13 +81,23 @@ public class FeedbackQuestionAttributes extends EntityAttributes implements Comp
     }
 
     public void setId(String id) {
+        if (id == null) {
+            Assumption.fail("id should not be null since we stopped relying on the database to generate id");
+        }
         this.feedbackQuestionId = id;
     }
     
     public String makeId() {
         return Sanitizer.sanitizeForUri(courseId)
                + "/" + Sanitizer.sanitizeForUri(feedbackSessionName)
-               + "/" + questionNumber;
+               + "/" + questionNumber
+               + "/" + formatTimeForId(new Date());
+    }
+    
+    private String formatTimeForId(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSS");
+        sdf.setTimeZone(TimeZone.getTimeZone(Const.SystemParams.ADMIN_TIME_ZONE));
+        return sdf.format(date.getTime());
     }
 
     @Override
