@@ -183,7 +183,7 @@ public class FeedbackSessionsDbTest extends BaseComponentTestCase {
         
         List<FeedbackSessionAttributes> fsaList = fsDb.getNonPrivateFeedbackSessions();
         
-        assertEquals(8, fsaList.size());
+        assertEquals(fsaList.toString(), 8, fsaList.size());
         for (FeedbackSessionAttributes fsa : fsaList) {
             assertFalse(fsa.isPrivateSession());
         }

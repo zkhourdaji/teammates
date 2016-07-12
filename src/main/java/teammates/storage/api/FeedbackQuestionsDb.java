@@ -367,6 +367,11 @@ public class FeedbackQuestionsDb extends EntitiesDb {
         List<Question> feedbackQuestionList =
                 (List<Question>) q.execute(feedbackSessionName, courseId, questionNumber);
         
+        if (feedbackQuestionList.size() > 1) {
+            log.severe("More than one question with same question number in " 
+                      + courseId + "/" + feedbackSessionName + " question " + questionNumber);
+        }
+        
         if (feedbackQuestionList.isEmpty() || JDOHelper.isDeleted(feedbackQuestionList.get(0))) {
             return null;
         }
@@ -443,6 +448,10 @@ public class FeedbackQuestionsDb extends EntitiesDb {
             txn.begin();
             
             FeedbackSession fs = new FeedbackSessionsDb().getEntity(session);
+            
+            if (fs == null) {
+                throw new EntityDoesNotExistException("Session disappeared");
+            }
             
             List<FeedbackQuestionAttributes> questions = getFeedbackQuestionsForSession(fs);
             if (oldQuestionNumber <= 0) {

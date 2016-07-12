@@ -522,7 +522,12 @@ public class FeedbackQuestionsLogic {
         }
 
         int oldQuestionNumber = oldQuestion.questionNumber;
-        int newQuestionNumber = newQuestion.questionNumber;
+        oldQuestion.updateValues(newQuestion);
+        if (oldQuestion.isChangesRequiresResponseDeletion(newQuestion)) {
+            frLogic.deleteFeedbackResponsesForQuestionAndCascade(fs, oldQuestion.getId(), true);
+        }
+        
+        newQuestion.removeIrrelevantVisibilityOptions();
         
         adjustQuestionNumbersAndUpdateQuestion(fs, newQuestion, oldQuestionNumber);
     }
