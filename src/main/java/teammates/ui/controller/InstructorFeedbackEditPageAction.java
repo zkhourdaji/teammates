@@ -14,7 +14,6 @@ import teammates.common.exception.EntityDoesNotExistException;
 import teammates.common.util.Assumption;
 import teammates.common.util.Const;
 import teammates.logic.api.GateKeeper;
-import teammates.storage.api.FeedbackQuestionsDb;
 
 public class InstructorFeedbackEditPageAction extends Action {
 

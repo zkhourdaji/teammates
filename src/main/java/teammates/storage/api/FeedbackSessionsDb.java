@@ -31,7 +31,6 @@ import teammates.common.util.Assumption;
 import teammates.common.util.Const;
 import teammates.common.util.TimeHelper;
 import teammates.storage.entity.FeedbackSession;
-import teammates.storage.entity.Question;
 
 public class FeedbackSessionsDb extends EntitiesDb {
     
@@ -621,8 +620,7 @@ public class FeedbackSessionsDb extends EntitiesDb {
         Key key = KeyFactory.createKey(FeedbackSession.class.getSimpleName(), 
                 feedbackSessionName + "%" + courseId);
         try {
-            FeedbackSession fs = getPm().getObjectById(FeedbackSession.class, key);
-            return fs;
+            return getPm().getObjectById(FeedbackSession.class, key);
         } catch (JDOObjectNotFoundException e) {
             // return null to be consistent with the other EntitiesDb
             return null;

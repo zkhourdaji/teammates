@@ -17,8 +17,6 @@ import teammates.common.exception.EntityAlreadyExistsException;
 import teammates.common.exception.EntityDoesNotExistException;
 import teammates.common.exception.InvalidParametersException;
 import teammates.logic.api.Logic;
-import teammates.logic.core.FeedbackSessionsLogic;
-import teammates.storage.api.FeedbackQuestionsDb;
 import teammates.storage.api.FeedbackSessionsDb;
 import teammates.storage.datastore.Datastore;
 import teammates.storage.entity.FeedbackQuestion;
@@ -62,7 +60,6 @@ public class DataMigrationForFeedbackQuestions extends RemoteApiClient {
                 System.out.println("possibly due to orphaned responses");
                 continue;
             }
-            System.out.println("worked");
             
             try {
                 new FeedbackSessionsDb().addQuestionToSession(session, old);
