@@ -163,10 +163,6 @@ public class FeedbackQuestionsDb extends EntitiesDb {
     public List<FeedbackQuestionAttributes> getFeedbackQuestionsForSession(FeedbackSession feedbackSession) {
         return getFeedbackQuestionAttributesFromFeedbackQuestions(feedbackSession.getFeedbackQuestions());
     }
-    
-    public List<FeedbackQuestionAttributes> getFeedbackQuestionsForSession(FeedbackSessionAttributes feedbackSession) {
-        return feedbackSession.getQuestions();
-    }
 
     public static List<FeedbackQuestionAttributes> getFeedbackQuestionAttributesFromFeedbackQuestions(
                                                         Collection<Question> questions) {
@@ -440,18 +436,21 @@ public class FeedbackQuestionsDb extends EntitiesDb {
     public void saveQuestionAndAdjustQuestionNumbers(FeedbackSessionAttributes session,
                 FeedbackQuestionAttributes questionToAddOrUpdate,
                 boolean isUpdating,
-                int oldQuestionNumber, 
-                int newQuestionNumber)
+                int oldQuestionNumber)
             throws InvalidParametersException, EntityDoesNotExistException, EntityAlreadyExistsException {
         Transaction txn = getPm().currentTransaction();
         try {
             txn.begin();
-            List<FeedbackQuestionAttributes> questions = getFeedbackQuestionsForSession(session);
-            if (oldQuestionNumber < 0) {
+            
+            FeedbackSession fs = new FeedbackSessionsDb().getEntity(session);
+            List<FeedbackQuestionAttributes> questions = getFeedbackQuestionsForSession(fs);
+            if (oldQuestionNumber <= 0) {
                 oldQuestionNumber = questions.size() + 1;
+            }
+            if (questionToAddOrUpdate.questionNumber <= 0) {
                 questionToAddOrUpdate.questionNumber = questions.size() + 1;
             }
-            adjustQuestionNumbersWithoutCommitting(oldQuestionNumber, newQuestionNumber, questions);
+            adjustQuestionNumbersWithoutCommitting(oldQuestionNumber, questionToAddOrUpdate.questionNumber , questions);
             if (isUpdating) {
                 updateFeedbackQuestionWithoutFlushing(questionToAddOrUpdate);
             } else {

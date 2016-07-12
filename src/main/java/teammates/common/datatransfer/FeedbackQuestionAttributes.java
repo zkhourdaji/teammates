@@ -106,7 +106,7 @@ public class FeedbackQuestionAttributes extends EntityAttributes implements Comp
 
     @Override
     public Question toEntity() {
-        String questionId = getId() == null ? makeId() : getId();
+        String questionId = getId() == null || getId().isEmpty() ? makeId() : getId();
         return new Question(questionId,
                             feedbackSessionName, courseId, creatorEmail,
                             questionMetaData, questionNumber, questionType, giverType,

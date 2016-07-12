@@ -56,7 +56,6 @@ public class FeedbackSessionAttributes extends EntityAttributes implements Sessi
 
     public FeedbackSessionAttributes(FeedbackSession fs) {
         this.feedbackSessionId = fs.getId();
-        Utils.getLogger().info(feedbackSessionId);
         this.feedbackSessionName = fs.getFeedbackSessionName();
         this.courseId = fs.getCourseId();
         this.creatorEmail = fs.getCreatorEmail();

@@ -26,6 +26,7 @@ import teammates.common.util.Assumption;
 import teammates.common.util.Const;
 import teammates.common.util.Utils;
 import teammates.storage.api.FeedbackQuestionsDb;
+import teammates.storage.api.FeedbackSessionsDb;
 
 public class FeedbackQuestionsLogic {
     
@@ -50,10 +51,8 @@ public class FeedbackQuestionsLogic {
     public void createFeedbackQuestion(FeedbackSessionAttributes fsa, FeedbackQuestionAttributes fqa)
             throws InvalidParametersException, EntityDoesNotExistException, EntityAlreadyExistsException {
 
-        int questionNumber = fqa.questionNumber;
-        fqa.setId(fqa.makeId());
         fqa.removeIrrelevantVisibilityOptions();
-        adjustQuestionNumbersAndCreateQuestion(fsa, fqa, -1, questionNumber);
+        adjustQuestionNumbersAndCreateQuestion(fsa, fqa, -1);
     }
     
     /**
@@ -89,6 +88,7 @@ public class FeedbackQuestionsLogic {
         question.courseId = newSession.getCourseId();
         question.creatorEmail = instructorEmail;
         question.questionNumber = -1;
+        question.setId("");
 
         createFeedbackQuestion(newSession, question);
         
@@ -151,7 +151,7 @@ public class FeedbackQuestionsLogic {
         
         
         List<FeedbackQuestionAttributes> questions =
-                fqDb.getFeedbackQuestionsForSession(session);
+                fqDb.getFeedbackQuestionsForSession(session.getFeedbackSessionName(), session.getCourseId());
         Collections.sort(questions);
         
         if (questions.size() > 1 && !areQuestionNumbersConsistent(questions)) {
@@ -525,8 +525,7 @@ public class FeedbackQuestionsLogic {
         int oldQuestionNumber = oldQuestion.questionNumber;
         int newQuestionNumber = newQuestion.questionNumber;
         
-        adjustQuestionNumbersAndUpdateQuestion(fs, newQuestion,
-                oldQuestionNumber, newQuestionNumber);
+        adjustQuestionNumbersAndUpdateQuestion(fs, newQuestion, oldQuestionNumber);
     }
     
     
@@ -544,21 +543,19 @@ public class FeedbackQuestionsLogic {
     private void adjustQuestionNumbersAndUpdateQuestion(
             FeedbackSessionAttributes session,
             FeedbackQuestionAttributes question,
-            int oldQuestionNumber,
-            int newQuestionNumber) throws InvalidParametersException, EntityDoesNotExistException, EntityAlreadyExistsException {
+            int oldQuestionNumber) throws InvalidParametersException, EntityDoesNotExistException, EntityAlreadyExistsException {
         
         fqDb.saveQuestionAndAdjustQuestionNumbers(session, question, true,
-                                   oldQuestionNumber, newQuestionNumber);
+                                   oldQuestionNumber);
     }
     
     private void adjustQuestionNumbersAndCreateQuestion(
-            FeedbackSessionAttributes session,
-            FeedbackQuestionAttributes question,
-            int oldQuestionNumber,
-            int newQuestionNumber) throws InvalidParametersException, EntityDoesNotExistException, EntityAlreadyExistsException {
+                FeedbackSessionAttributes session,
+                FeedbackQuestionAttributes question,
+                int oldQuestionNumber) 
+            throws InvalidParametersException, EntityDoesNotExistException, EntityAlreadyExistsException {
         
-        fqDb.saveQuestionAndAdjustQuestionNumbers(session, question, false,
-                                   oldQuestionNumber, newQuestionNumber);
+        fqDb.saveQuestionAndAdjustQuestionNumbers(session, question, false, oldQuestionNumber);
     }
 
     /**

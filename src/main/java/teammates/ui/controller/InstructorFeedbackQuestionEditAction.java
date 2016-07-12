@@ -78,7 +78,7 @@ public class InstructorFeedbackQuestionEditAction extends Action {
 
     private void editQuestion(FeedbackSessionAttributes feedbackSession, 
                               FeedbackQuestionAttributes updatedQuestion) throws InvalidParametersException,
-                                                                                 EntityDoesNotExistException {
+                                                                                 EntityDoesNotExistException, EntityAlreadyExistsException {
         String err = validateQuestionGiverRecipientVisibility(updatedQuestion);
         
         if (!err.isEmpty()) {
