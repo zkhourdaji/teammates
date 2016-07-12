@@ -26,8 +26,6 @@ import teammates.common.util.Assumption;
 import teammates.common.util.Const;
 import teammates.common.util.Utils;
 import teammates.storage.api.FeedbackQuestionsDb;
-import teammates.storage.entity.FeedbackSession;
-import teammates.storage.entity.Question;
 
 public class FeedbackQuestionsLogic {
     
@@ -66,16 +64,9 @@ public class FeedbackQuestionsLogic {
             fqa.questionNumber = questions.size() + 1;
         }
         int questionNumber = fqa.questionNumber;
-        // ignore question number set by user
-        // id of a new question is always based on the largest question number + 1
-        if (!questions.isEmpty()) {
-            fqa.questionNumber = questions.get(questions.size() - 1).questionNumber + 1;
-        } else {
-            fqa.questionNumber = 1;
-        }
         fqa.setId(fqa.makeId());
         
-        adjustQuestionNumbers(fsa, questions.size() + 1, questionNumber, questions);
+        adjustQuestionNumbers(questions.size() + 1, questionNumber, questions);
         createFeedbackQuestionNoIntegrityCheck(fsa, fqa, questionNumber);
     }
     
@@ -541,7 +532,7 @@ public class FeedbackQuestionsLogic {
             Assumption.fail("Session disappeared.");
         }
         
-        adjustQuestionNumbers(fs, oldQuestionNumber, newQuestionNumber, questions);
+        adjustQuestionNumbers(oldQuestionNumber, newQuestionNumber, questions);
         updateFeedbackQuestion(fs, newQuestion);
     }
     
@@ -554,35 +545,11 @@ public class FeedbackQuestionsLogic {
      * @param newQuestionNumber
      * @param questions
      */
-    private void adjustQuestionNumbers(FeedbackSessionAttributes fs,
+    private void adjustQuestionNumbers(
             int oldQuestionNumber,
             int newQuestionNumber, List<FeedbackQuestionAttributes> questions) {
         
-        if (oldQuestionNumber > newQuestionNumber && oldQuestionNumber >= 1) {
-            for (int i = oldQuestionNumber - 1; i >= newQuestionNumber; i--) {
-                FeedbackQuestionAttributes question = questions.get(i - 1);
-                question.questionNumber += 1;
-                try {
-                    updateFeedbackQuestionWithoutResponseRateUpdate(fs, question);
-                } catch (InvalidParametersException e) {
-                    Assumption.fail("Invalid question. " + e);
-                } catch (EntityDoesNotExistException e) {
-                    Assumption.fail("Question disappeared." + e);
-                }
-            }
-        } else if (oldQuestionNumber < newQuestionNumber && oldQuestionNumber < questions.size()) {
-            for (int i = oldQuestionNumber + 1; i <= newQuestionNumber; i++) {
-                FeedbackQuestionAttributes question = questions.get(i - 1);
-                question.questionNumber -= 1;
-                try {
-                    updateFeedbackQuestionWithoutResponseRateUpdate(fs, question);
-                } catch (InvalidParametersException e) {
-                    Assumption.fail("Invalid question." + e);
-                } catch (EntityDoesNotExistException e) {
-                    Assumption.fail("Question disappeared." + e);
-                }
-            }
-        }
+        fqDb.adjustQuestionNumbers(oldQuestionNumber, newQuestionNumber, questions);
     }
 
     /**

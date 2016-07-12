@@ -22,7 +22,6 @@ import teammates.common.exception.EntityDoesNotExistException;
 import teammates.common.exception.InvalidParametersException;
 import teammates.common.util.Assumption;
 import teammates.common.util.Const;
-import teammates.storage.entity.FeedbackQuestion;
 import teammates.storage.entity.Question;
 import teammates.storage.entity.FeedbackSession;
 
@@ -245,6 +244,14 @@ public class FeedbackQuestionsDb extends EntitiesDb {
         
         // TODO: Sanitize values and update tests accordingly
         
+        updateFeedbackQuestionWithoutFlushing(newAttributes, keepUpdateTimestamp);
+        
+        log.info(newAttributes.getBackupIdentifier());
+        getPm().close();
+    }
+
+    private void updateFeedbackQuestionWithoutFlushing(FeedbackQuestionAttributes newAttributes,
+            boolean keepUpdateTimestamp) throws InvalidParametersException, EntityDoesNotExistException {
         if (!newAttributes.isValid()) {
             throw new InvalidParametersException(newAttributes.getInvalidityInfo());
         }
@@ -268,9 +275,6 @@ public class FeedbackQuestionsDb extends EntitiesDb {
         
         //set true to prevent changes to last update timestamp
         fq.keepUpdateTimestamp = keepUpdateTimestamp;
-        
-        log.info(newAttributes.getBackupIdentifier());
-        getPm().close();
     }
     
     public void deleteQuestion(FeedbackSessionAttributes fsa, FeedbackQuestionAttributes questionToDelete) 
@@ -331,8 +335,7 @@ public class FeedbackQuestionsDb extends EntitiesDb {
         Key k = KeyFactory.createKey(FeedbackSession.class.getSimpleName(), fsa.getId())
                             .getChild(Question.class.getSimpleName(), feedbackQuestionId);
         try {
-            Question q = getPm().getObjectById(Question.class, k);
-            return q;
+            return getPm().getObjectById(Question.class, k);
         } catch (JDOObjectNotFoundException e) {
             return null;
         }
@@ -416,5 +419,44 @@ public class FeedbackQuestionsDb extends EntitiesDb {
                 feedbackQuestionToGet.feedbackSessionName,
                 feedbackQuestionToGet.courseId,
                 feedbackQuestionToGet.questionNumber);
+    }
+
+    public void adjustQuestionNumbers(int oldQuestionNumber, 
+                                      int newQuestionNumber, List<FeedbackQuestionAttributes> questions) {
+        Transaction txn = getPm().currentTransaction();
+        try {
+            txn.begin();
+            if (oldQuestionNumber > newQuestionNumber && oldQuestionNumber >= 1) {
+                for (int i = oldQuestionNumber - 1; i >= newQuestionNumber; i--) {
+                    FeedbackQuestionAttributes question = questions.get(i - 1);
+                    question.questionNumber += 1;
+                    try {
+                        updateFeedbackQuestionWithoutFlushing(question, false);
+                    } catch (InvalidParametersException e) {
+                        Assumption.fail("Invalid question. " + e);
+                    } catch (EntityDoesNotExistException e) {
+                        Assumption.fail("Question disappeared." + e);
+                    }
+                }
+            } else if (oldQuestionNumber < newQuestionNumber && oldQuestionNumber < questions.size()) {
+                for (int i = oldQuestionNumber + 1; i <= newQuestionNumber; i++) {
+                    FeedbackQuestionAttributes question = questions.get(i - 1);
+                    question.questionNumber -= 1;
+                    try {
+                        updateFeedbackQuestionWithoutFlushing(question, false);
+                    } catch (InvalidParametersException e) {
+                        Assumption.fail("Invalid question." + e);
+                    } catch (EntityDoesNotExistException e) {
+                        Assumption.fail("Question disappeared." + e);
+                    }
+                }
+            }
+            txn.commit();
+        } finally {
+            if (txn.isActive()) {
+                txn.rollback();
+            }
+            getPm().close();
+        }
     }
 }

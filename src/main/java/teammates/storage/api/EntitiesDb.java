@@ -164,59 +164,7 @@ public abstract class EntitiesDb {
         return entities;
 
     }
-
     
-    /**
-     * Warning: Do not use this method unless a previous update might cause
-     * adding of the new entity to fail due to EntityAlreadyExists exception
-     * Preconditions:
-     * <br> * {@code entityToAdd} is not null and has valid data.
-     */
-    public Object createEntityWithoutExistenceCheck(EntityAttributes entityToAdd)
-            throws InvalidParametersException {
-        
-        Object entity = createEntityWithoutExistenceCheckWithoutFlushing(entityToAdd);
-        
-        getPm().makePersistent(entity);
-        getPm().flush();
-
-        // Wait for the operation to persist
-        if (Config.PERSISTENCE_CHECK_DURATION > 0) {
-            int elapsedTime = 0;
-            Object entityCheck = getEntity(entityToAdd);
-            while (entityCheck == null
-                   && elapsedTime < Config.PERSISTENCE_CHECK_DURATION) {
-                ThreadHelper.waitBriefly();
-                entityCheck = getEntity(entityToAdd);
-                //check before incrementing to avoid boundary case problem
-                if (entityCheck == null) {
-                    elapsedTime += ThreadHelper.WAIT_DURATION;
-                }
-            }
-            if (elapsedTime >= Config.PERSISTENCE_CHECK_DURATION) {
-                log.info("Operation did not persist in time: create"
-                         + entityToAdd.getEntityTypeAsString() + "->"
-                         + entityToAdd.getIdentificationString());
-            }
-        }
-        log.info(entityToAdd.getBackupIdentifier());
-        
-        return entity;
-    }
-    
-    public Object createEntityWithoutExistenceCheckWithoutFlushing(EntityAttributes entityToAdd) 
-            throws InvalidParametersException {
-        Assumption.assertNotNull(Const.StatusCodes.DBLEVEL_NULL_INPUT, entityToAdd);
-        
-        entityToAdd.sanitizeForSaving();
-        
-        if (!entityToAdd.isValid()) {
-            throw new InvalidParametersException(entityToAdd.getInvalidityInfo());
-        }
-        
-        Object entity = entityToAdd.toEntity();
-        return entity;
-    }
     
     // TODO: use this method for subclasses.
     /**
