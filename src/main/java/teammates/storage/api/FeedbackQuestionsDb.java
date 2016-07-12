@@ -443,6 +443,7 @@ public class FeedbackQuestionsDb extends EntitiesDb {
             txn.begin();
             
             FeedbackSession fs = new FeedbackSessionsDb().getEntity(session);
+            
             List<FeedbackQuestionAttributes> questions = getFeedbackQuestionsForSession(fs);
             if (oldQuestionNumber <= 0) {
                 oldQuestionNumber = questions.size() + 1;
@@ -454,6 +455,7 @@ public class FeedbackQuestionsDb extends EntitiesDb {
             if (isUpdating) {
                 updateFeedbackQuestionWithoutFlushing(questionToAddOrUpdate);
             } else {
+                questionToAddOrUpdate.setId(questionToAddOrUpdate.makeId());
                 createFeedbackQuestionWithoutFlushing(session, questionToAddOrUpdate);
             }
             txn.commit();

@@ -70,7 +70,7 @@ public class FeedbackQuestionsLogic {
             FeedbackQuestionAttributes fqa, int questionNumber) throws InvalidParametersException, EntityDoesNotExistException, EntityAlreadyExistsException {
         fqa.questionNumber = questionNumber;
         fqa.removeIrrelevantVisibilityOptions();
-        fqDb.createFeedbackQuestion(fsa, fqa);
+        createFeedbackQuestion(fsa, fqa);
     }
     
     public FeedbackQuestionAttributes copyFeedbackQuestion(
@@ -88,7 +88,6 @@ public class FeedbackQuestionsLogic {
         question.courseId = newSession.getCourseId();
         question.creatorEmail = instructorEmail;
         question.questionNumber = -1;
-        question.setId("");
 
         createFeedbackQuestion(newSession, question);
         
