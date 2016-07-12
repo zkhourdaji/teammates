@@ -12,6 +12,7 @@ import teammates.common.datatransfer.FeedbackQuestionAttributes;
 import teammates.common.datatransfer.FeedbackQuestionDetails;
 import teammates.common.datatransfer.FeedbackQuestionType;
 import teammates.common.datatransfer.FeedbackSessionAttributes;
+import teammates.common.exception.EntityAlreadyExistsException;
 import teammates.common.exception.EntityDoesNotExistException;
 import teammates.common.exception.InvalidParametersException;
 import teammates.common.exception.TeammatesException;
@@ -56,7 +57,7 @@ public class InstructorFeedbackQuestionEditAction extends Action {
                 // Assumption.fails are not tested
                 Assumption.fail("Invalid editType");
             }
-        } catch (InvalidParametersException e) {
+        } catch (InvalidParametersException | EntityAlreadyExistsException e) {
             // This part is not tested because GateKeeper handles if this happens, would be
             // extremely difficult to replicate a situation whereby it gets past GateKeeper
             setStatusForException(e);

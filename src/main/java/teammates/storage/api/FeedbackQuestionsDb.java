@@ -113,6 +113,14 @@ public class FeedbackQuestionsDb extends EntitiesDb {
         new FeedbackSessionsDb().addQuestionToSessionWithoutExistenceCheck(fsa, question);
     }
     
+    public void createFeedbackQuestionWithoutFlushing(FeedbackSessionAttributes fsa, FeedbackQuestionAttributes question) 
+            throws InvalidParametersException, EntityDoesNotExistException, EntityAlreadyExistsException {
+        Assumption.assertNotNull(Const.StatusCodes.DBLEVEL_NULL_INPUT, fsa);
+        Assumption.assertNotNull(Const.StatusCodes.DBLEVEL_NULL_INPUT, question);
+        
+        new FeedbackSessionsDb().addQuestionToSessionWithoutFlushing(fsa, question);
+    }
+    
     /**
      * Preconditions: <br>
      * * All parameters are non-null.
@@ -154,6 +162,10 @@ public class FeedbackQuestionsDb extends EntitiesDb {
     
     public List<FeedbackQuestionAttributes> getFeedbackQuestionsForSession(FeedbackSession feedbackSession) {
         return getFeedbackQuestionAttributesFromFeedbackQuestions(feedbackSession.getFeedbackQuestions());
+    }
+    
+    public List<FeedbackQuestionAttributes> getFeedbackQuestionsForSession(FeedbackSessionAttributes feedbackSession) {
+        return feedbackSession.getQuestions();
     }
 
     public static List<FeedbackQuestionAttributes> getFeedbackQuestionAttributesFromFeedbackQuestions(
@@ -249,8 +261,12 @@ public class FeedbackQuestionsDb extends EntitiesDb {
         log.info(newAttributes.getBackupIdentifier());
         getPm().close();
     }
+    
+    public void updateFeedbackQuestionWithoutFlushing(FeedbackQuestionAttributes newAttributes) throws InvalidParametersException, EntityDoesNotExistException {
+        updateFeedbackQuestionWithoutFlushing(newAttributes, false);
+    }
 
-    private void updateFeedbackQuestionWithoutFlushing(FeedbackQuestionAttributes newAttributes,
+    public void updateFeedbackQuestionWithoutFlushing(FeedbackQuestionAttributes newAttributes,
             boolean keepUpdateTimestamp) throws InvalidParametersException, EntityDoesNotExistException {
         if (!newAttributes.isValid()) {
             throw new InvalidParametersException(newAttributes.getInvalidityInfo());
@@ -421,35 +437,25 @@ public class FeedbackQuestionsDb extends EntitiesDb {
                 feedbackQuestionToGet.questionNumber);
     }
 
-    public void adjustQuestionNumbers(int oldQuestionNumber, 
-                                      int newQuestionNumber, List<FeedbackQuestionAttributes> questions) {
+    public void saveQuestionAndAdjustQuestionNumbers(FeedbackSessionAttributes session,
+                FeedbackQuestionAttributes questionToAddOrUpdate,
+                boolean isUpdating,
+                int oldQuestionNumber, 
+                int newQuestionNumber)
+            throws InvalidParametersException, EntityDoesNotExistException, EntityAlreadyExistsException {
         Transaction txn = getPm().currentTransaction();
         try {
             txn.begin();
-            if (oldQuestionNumber > newQuestionNumber && oldQuestionNumber >= 1) {
-                for (int i = oldQuestionNumber - 1; i >= newQuestionNumber; i--) {
-                    FeedbackQuestionAttributes question = questions.get(i - 1);
-                    question.questionNumber += 1;
-                    try {
-                        updateFeedbackQuestionWithoutFlushing(question, false);
-                    } catch (InvalidParametersException e) {
-                        Assumption.fail("Invalid question. " + e);
-                    } catch (EntityDoesNotExistException e) {
-                        Assumption.fail("Question disappeared." + e);
-                    }
-                }
-            } else if (oldQuestionNumber < newQuestionNumber && oldQuestionNumber < questions.size()) {
-                for (int i = oldQuestionNumber + 1; i <= newQuestionNumber; i++) {
-                    FeedbackQuestionAttributes question = questions.get(i - 1);
-                    question.questionNumber -= 1;
-                    try {
-                        updateFeedbackQuestionWithoutFlushing(question, false);
-                    } catch (InvalidParametersException e) {
-                        Assumption.fail("Invalid question." + e);
-                    } catch (EntityDoesNotExistException e) {
-                        Assumption.fail("Question disappeared." + e);
-                    }
-                }
+            List<FeedbackQuestionAttributes> questions = getFeedbackQuestionsForSession(session);
+            if (oldQuestionNumber < 0) {
+                oldQuestionNumber = questions.size() + 1;
+                questionToAddOrUpdate.questionNumber = questions.size() + 1;
+            }
+            adjustQuestionNumbersWithoutCommitting(oldQuestionNumber, newQuestionNumber, questions);
+            if (isUpdating) {
+                updateFeedbackQuestionWithoutFlushing(questionToAddOrUpdate);
+            } else {
+                createFeedbackQuestionWithoutFlushing(session, questionToAddOrUpdate);
             }
             txn.commit();
         } finally {
@@ -457,6 +463,35 @@ public class FeedbackQuestionsDb extends EntitiesDb {
                 txn.rollback();
             }
             getPm().close();
+        }
+    }
+
+    private void adjustQuestionNumbersWithoutCommitting(int oldQuestionNumber, int newQuestionNumber,
+            List<FeedbackQuestionAttributes> questions) {
+        if (oldQuestionNumber > newQuestionNumber && oldQuestionNumber >= 1) {
+            for (int i = oldQuestionNumber - 1; i >= newQuestionNumber; i--) {
+                FeedbackQuestionAttributes question = questions.get(i - 1);
+                question.questionNumber += 1;
+                try {
+                    updateFeedbackQuestionWithoutFlushing(question, false);
+                } catch (InvalidParametersException e) {
+                    Assumption.fail("Invalid question. " + e);
+                } catch (EntityDoesNotExistException e) {
+                    Assumption.fail("Question disappeared." + e);
+                }
+            }
+        } else if (oldQuestionNumber < newQuestionNumber && oldQuestionNumber < questions.size()) {
+            for (int i = oldQuestionNumber + 1; i <= newQuestionNumber; i++) {
+                FeedbackQuestionAttributes question = questions.get(i - 1);
+                question.questionNumber -= 1;
+                try {
+                    updateFeedbackQuestionWithoutFlushing(question, false);
+                } catch (InvalidParametersException e) {
+                    Assumption.fail("Invalid question." + e);
+                } catch (EntityDoesNotExistException e) {
+                    Assumption.fail("Question disappeared." + e);
+                }
+            }
         }
     }
 }

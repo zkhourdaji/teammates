@@ -295,21 +295,7 @@ public class FeedbackSessionsDb extends EntitiesDb {
         try {
             txn.begin();
         
-            FeedbackSession fs = (FeedbackSession) getEntity(existingSession);
-            
-            if (fs == null) {
-                throw new EntityDoesNotExistException(
-                        ERROR_UPDATE_NON_EXISTENT + existingSession.toString());
-            }
-            
-            if (fs.getFeedbackQuestions().contains(question.toEntity())) {
-                String error = String.format(ERROR_CREATE_ENTITY_ALREADY_EXISTS,
-                        question.getEntityTypeAsString()) + question.getIdentificationString();
-                log.info(error);
-                throw new EntityAlreadyExistsException(error, question);
-            }
-            
-            fs.getFeedbackQuestions().add(question.toEntity());
+            addQuestionToSessionWithoutFlushing(existingSession, question);
             
             txn.commit();
         } finally {
@@ -318,6 +304,26 @@ public class FeedbackSessionsDb extends EntitiesDb {
             }
             getPm().close();
         }
+    }
+
+    public void addQuestionToSessionWithoutFlushing(FeedbackSessionAttributes existingSession,
+            FeedbackQuestionAttributes question) throws EntityDoesNotExistException,
+            EntityAlreadyExistsException {
+        FeedbackSession fs = (FeedbackSession) getEntity(existingSession);
+        
+        if (fs == null) {
+            throw new EntityDoesNotExistException(
+                    ERROR_UPDATE_NON_EXISTENT + existingSession.toString());
+        }
+        
+        if (fs.getFeedbackQuestions().contains(question.toEntity())) {
+            String error = String.format(ERROR_CREATE_ENTITY_ALREADY_EXISTS,
+                    question.getEntityTypeAsString()) + question.getIdentificationString();
+            log.info(error);
+            throw new EntityAlreadyExistsException(error, question);
+        }
+        
+        fs.getFeedbackQuestions().add(question.toEntity());
     }
     
     public void addQuestionToSessionWithoutExistenceCheck(
