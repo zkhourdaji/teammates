@@ -249,6 +249,9 @@ public class FeedbackQuestionsDb extends EntitiesDb {
             throws InvalidParametersException, EntityDoesNotExistException {
         
         Assumption.assertNotNull(Const.StatusCodes.DBLEVEL_NULL_INPUT, newAttributes);
+        if (!newAttributes.isValid()) {
+            throw new InvalidParametersException(newAttributes.getInvalidityInfo());
+        }
         
         // TODO: Sanitize values and update tests accordingly
         
@@ -439,9 +442,6 @@ public class FeedbackQuestionsDb extends EntitiesDb {
                 boolean isUpdating,
                 int oldQuestionNumber)
             throws InvalidParametersException, EntityDoesNotExistException, EntityAlreadyExistsException {
-        if (!questionToAddOrUpdate.isValid()) {
-            throw new InvalidParametersException(questionToAddOrUpdate.getInvalidityInfo());
-        }
         Transaction txn = getPm().currentTransaction();
         
         try {
@@ -451,6 +451,9 @@ public class FeedbackQuestionsDb extends EntitiesDb {
             
             if (fs == null) {
                 throw new EntityDoesNotExistException("Session disappeared");
+            }
+            if (!questionToAddOrUpdate.isValid()) {
+                throw new InvalidParametersException(questionToAddOrUpdate.getInvalidityInfo());
             }
             
             List<FeedbackQuestionAttributes> questions = getFeedbackQuestionsForSession(fs);

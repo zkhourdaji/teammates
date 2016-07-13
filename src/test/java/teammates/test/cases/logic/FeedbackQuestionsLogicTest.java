@@ -212,8 +212,8 @@ public class FeedbackQuestionsLogicTest extends BaseComponentTestCase {
         try {
             fqLogic.createFeedbackQuestion(sessionWithWrongCourse, question);
             signalFailureToDetectException();
-        } catch (AssertionError e) {
-            assertEquals(e.getMessage(), "Session disappeared.");
+        } catch (EntityDoesNotExistException e) {
+            assertEquals(e.getMessage(), "Session disappeared");
         }
         
         ______TS("Add questions sequentially");
