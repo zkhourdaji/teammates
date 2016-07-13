@@ -264,10 +264,6 @@ public class FeedbackQuestionsDb extends EntitiesDb {
 
     public void updateFeedbackQuestionWithoutFlushing(FeedbackQuestionAttributes newAttributes,
             boolean keepUpdateTimestamp) throws InvalidParametersException, EntityDoesNotExistException {
-        if (!newAttributes.isValid()) {
-            throw new InvalidParametersException(newAttributes.getInvalidityInfo());
-        }
-        
         Question fq = (Question) getEntity(newAttributes);
         
         if (fq == null) {
@@ -443,7 +439,11 @@ public class FeedbackQuestionsDb extends EntitiesDb {
                 boolean isUpdating,
                 int oldQuestionNumber)
             throws InvalidParametersException, EntityDoesNotExistException, EntityAlreadyExistsException {
+        if (!questionToAddOrUpdate.isValid()) {
+            throw new InvalidParametersException(questionToAddOrUpdate.getInvalidityInfo());
+        }
         Transaction txn = getPm().currentTransaction();
+        
         try {
             txn.begin();
             

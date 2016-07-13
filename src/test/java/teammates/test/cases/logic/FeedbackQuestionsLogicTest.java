@@ -201,7 +201,7 @@ public class FeedbackQuestionsLogicTest extends BaseComponentTestCase {
             fqLogic.createFeedbackQuestion(nonExistentSession, question);
             signalFailureToDetectException();
         } catch (EntityDoesNotExistException e) {
-            assertEquals(e.getMessage(), "Session disappeared.");
+            assertEquals("Session disappeared", e.getMessage());
         }
         
         ______TS("Add question for course that does not exist");
