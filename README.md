@@ -6,6 +6,7 @@
 
 <img src="https://img.shields.io/badge/java-119%20KLoC-blue.svg">
 [![Dependency Status](https://www.versioneye.com/user/projects/579103ca51500e0031886f12/badge.svg)](https://www.versioneye.com/user/projects/579103ca51500e0031886f12)
+[![Coverage Status](https://coveralls.io/repos/github/TEAMMATES/teammates/badge.svg?branch=master)](https://coveralls.io/github/TEAMMATES/teammates?branch=master)
 
 <img src="https://img.shields.io/badge/html-5%20KLoC-blue.svg">
 <img src="https://img.shields.io/badge/css-2%20KLoC-blue.svg">
