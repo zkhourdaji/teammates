@@ -71,5 +71,5 @@ $(document).ready(function() {
 
     var $questionPanelHeadings = $('.ajax_submit,.ajax_auto');
     $questionPanelHeadings.click(seeMoreRequest);
-    $('.ajax_auto').click();
+    $('.ajax_auto').first().click();
 });
